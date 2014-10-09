@@ -1,4 +1,5 @@
 CRANAZ CORE AND AFFILIATES ADD-ONS
+===========
 
 Il est strictement interdit d'utiliser, de redistribuer, de vendre, de modifier ou de diffuser le programme ci-joint ou son code source sans permission explicite et préalable du/des auteurs dudit programme, conformément
 à loi du copyright et de la proprieté intellectuelle. Toute utilisation frauduleuse, illégale ou non conforme entraînera une fermeture immédiate et sans préavis du serveur incriminé, et ce jusqu'à retrait du programme
