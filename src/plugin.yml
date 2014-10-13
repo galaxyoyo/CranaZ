@@ -1,0 +1,63 @@
+name: CranaZ
+main: com.bp389.cranaz.CranaZ
+version: 1.911b
+authors:
+- BlackPhantom
+- Arnialo
+load: STARTUP
+softdepend: [CrackShot, Citizens]
+commands:
+  bags:
+    description: Commande relative aux sacs.
+    usage: /<command> [arguments...]
+    permission: cranaz.bags.basic
+    permission-message: Vous n'avez pas la permission.
+  logout:
+    description: Se deconnecter
+    usage: /<command>
+  clp:
+    description: Commande basique de CranaZ loot and packs
+    usage: /<command> [Commandes] [Arguments...]
+    permission: clp.basic
+    permission-message: Acces refuse
+  cranaz:
+    description: Commande basique de CranaZ Zombie IA
+    usage: /<command> [...]
+    permission: cranaz.basic
+    permission-message: Acces refuse
+permissions:
+  cranaz.bags.basic:
+    description: Commande basique des sacs.
+    default: true
+  cranaz.bags.get:
+    description: Recuperer un sac.
+    default: op
+  cranaz.bags.give:
+    description: Donner un sac.
+    default: op
+  cranaz.bags.*:
+    description: Permission universelle pour les sacs
+    children:
+      cranaz.bags.basic: true
+      cranaz.bags.get: true
+      cranaz.bags.give: true
+    default: op
+  clp.basic:
+    description: Commande de base de CranaZ loot and packs
+    default: true
+  clp.pack.define:
+    description: Creer des packs
+    default: op
+  clp.pack.delete:
+    description: Supprimer des packs et des loots
+    default: op
+  clp.*:
+    description: Permission universelle de CranaZ loot and packs
+    default: op
+    children:
+      clp.basic: true
+      clp.pack.define: true
+      clp.pack.delete: true
+  cranaz.basic:
+    description: Permission basique de CranaZ
+    default: op
