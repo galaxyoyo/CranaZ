@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.items.Items;
 
-public class Loots extends Loadable{
+public final class Loots extends Loadable{
 	public static LootRefactor factor = new LootRefactor();
 	public static void startSpawns(){factor.startSpawns();}
 	@SuppressWarnings({ "deprecation", "static-access" })

@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class IBagFactor {
+public final class IBagFactor {
 	private JavaPlugin plugin;
 	public IBagFactor(JavaPlugin plugin){this.plugin = plugin;}
 	public void serial(String pName, Inventory i)

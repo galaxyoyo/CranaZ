@@ -20,7 +20,7 @@ import com.bp389.cranaz.ia.ZIA;
  * @author BlackPhantom
  *
  */
-public class CranaZ extends JavaPlugin
+public final class CranaZ extends JavaPlugin
 {
 	@Override
 	public void onLoad() {

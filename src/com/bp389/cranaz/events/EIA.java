@@ -45,7 +45,7 @@ import com.bp389.cranaz.ia.entities.EnhancedZombie;
 import com.shampaggon.crackshot.events.WeaponPreShootEvent;
 import com.shampaggon.crackshot.events.WeaponScopeEvent;
 
-public class EIA extends GEvent implements Listener{
+public final class EIA extends GEvent implements Listener{
 	public EIA(JavaPlugin jp) {
 	    super(jp);
     }
@@ -122,7 +122,7 @@ public class EIA extends GEvent implements Listener{
 				}
 			}.runTaskLater(plugin, 6000L);
 		}
-		Bukkit.getScheduler().runTask(plugin, new BukkitRunnable(){
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(Entity entity : e.getPlayer().getNearbyEntities(55D, 15D, 55D)){

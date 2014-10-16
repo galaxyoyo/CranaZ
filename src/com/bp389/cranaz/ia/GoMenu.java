@@ -15,7 +15,7 @@ import com.bp389.cranaz.events.GEvent;
  * @author BlackPhantom
  *
  */
-public class GoMenu {
+public final class GoMenu {
 	private Inventory i;
 	public static ItemStack alone, many;
 	public GoMenu(){

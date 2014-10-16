@@ -25,7 +25,7 @@ import com.bp389.cranaz.items.Items;
 
 import javax.imageio.ImageIO;
 
-public class EEffects extends GEvent implements Listener {
+public final class EEffects extends GEvent implements Listener {
 	public EEffects(JavaPlugin plugin) {
 	    super(plugin);
     }

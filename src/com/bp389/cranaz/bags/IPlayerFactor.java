@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class IPlayerFactor {
+public final class IPlayerFactor {
 	private static volatile HashMap<Player, Inventory> bags = new HashMap<Player, Inventory>();
 	public static final String bagsLoc = "plugins/CranaZ/CranaZBags/bags/";
 	protected static JavaPlugin main;

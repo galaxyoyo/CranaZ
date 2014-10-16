@@ -26,7 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.shampaggon.crackshot.CSUtility;
 
-public class LootRefactor {
+public final class LootRefactor {
 	public LootRefactor(){}
 	public static final CSUtility csu = new CSUtility();
 	private static JavaPlugin plugin;

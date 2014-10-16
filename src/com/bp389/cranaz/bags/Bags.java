@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.items.Items;
 
-public class Bags extends Loadable{
+public final class Bags extends Loadable{
 	public static final File getBagFile(String pName){
 		return new File(IPlayerFactor.bagsLoc + pName + ".yml");
 	}

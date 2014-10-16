@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class Packets {
+public final class Packets {
 	public static void sendPacket(Player p, Packet packet){
 		((CraftPlayer)p).getHandle().playerConnection.sendPacket(packet);
 	}

@@ -13,7 +13,7 @@ import com.bp389.cranaz.events.GEvent;
  * @author BlackPhantom
  *
  */
-public class ResPackMenu {
+public final class ResPackMenu {
 	private Inventory i;
 	public static ItemStack light, heavy;
 	public ResPackMenu(){

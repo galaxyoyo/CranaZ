@@ -28,7 +28,7 @@ import com.bp389.cranaz.items.Items;
 import com.bp389.cranaz.legacy.Legacy;
 import com.bp389.cranaz.legacy.NQHandler;
 
-public class EItemsLegacy extends GEvent implements Listener{
+public final class EItemsLegacy extends GEvent implements Listener{
 	public EItemsLegacy(JavaPlugin jp) {
 	    super(jp);
     }

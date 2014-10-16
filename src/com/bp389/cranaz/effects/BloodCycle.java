@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author BlackPhantom
  *
  */
-public class BloodCycle extends BukkitRunnable{
+public final class BloodCycle extends BukkitRunnable{
 	private Player p;
 	private int cycle;
 	private Random r = new Random();

@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author BlackPhantom
  *
  */
-public class NQHandler {
+public final class NQHandler {
 	private static HashMap<Player, Handler> damagins = new HashMap<Player, Handler>();
 	private static JavaPlugin jp;
 	public static void init(JavaPlugin plugin){

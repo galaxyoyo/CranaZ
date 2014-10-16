@@ -17,7 +17,7 @@ import com.bp389.cranaz.loots.LootRefactor;
 import com.bp389.cranaz.loots.Loots;
 import com.bp389.cranaz.loots.LootRefactor.ThreadSpawner;
 
-public class ELoots extends GEvent implements Listener{
+public final class ELoots extends GEvent implements Listener{
 	public ELoots(JavaPlugin jp) {
 	    super(jp);
     }

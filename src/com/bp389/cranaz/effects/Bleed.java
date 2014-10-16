@@ -19,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author BlackPhantom
  *
  */
-public class Bleed {
+public final class Bleed {
 	public static final PotionEffect heavy = new PotionEffect(PotionEffectType.BLINDNESS, 500 * 20, 1);
 	public static final PotionEffect hurt = new PotionEffect(PotionEffectType.WEAKNESS, 500 * 20, 1);
 	public static final PotionEffect grave = new PotionEffect(PotionEffectType.SLOW, 500 * 20, 1);

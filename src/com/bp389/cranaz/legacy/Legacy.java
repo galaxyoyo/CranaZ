@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.Loader;
 
-public class Legacy extends Loadable {
+public final class Legacy extends Loadable {
 	public static final File wl = new File("plugins/CranaZ/whitelist/");
 	@Override
 	public void onEnable() {

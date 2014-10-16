@@ -10,7 +10,7 @@ import net.minecraft.server.v1_7_R3.World;
  * @author BlackPhantom
  *
  */
-public class UnpickableItem extends EntityItem {
+public final class UnpickableItem extends EntityItem {
 	public UnpickableItem(World world, double d0, double d1, double d2, ItemStack itemstack) {
 	    super(world, d0, d1, d2, itemstack);
     }

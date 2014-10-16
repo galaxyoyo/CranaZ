@@ -28,7 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author BlackPhantom
  *
  */
-public  class Items
+public final class Items
 {
 	public static Random random = new Random();
 	public static final Material BAG = Material.QUARTZ;

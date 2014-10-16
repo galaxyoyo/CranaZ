@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.Loader;
 
-public class CItems extends Loadable{
+public final class CItems extends Loadable{
 	@Override
 	public void onEnable() {
 	    Items.recipes();

@@ -16,7 +16,7 @@ import com.bp389.cranaz.bags.Bags;
 import com.bp389.cranaz.bags.IPlayerFactor;
 import com.bp389.cranaz.items.Items;
 
-public class EBags extends GEvent implements Listener {
+public final class EBags extends GEvent implements Listener {
 	public EBags(JavaPlugin plugin) {
 	    super(plugin);
     }

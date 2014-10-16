@@ -19,7 +19,7 @@ import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.thirst.ThirstFactor;
 import com.bp389.cranaz.thirst.ThirstRunnable;
 
-public class EThirst extends GEvent implements Listener {
+public final class EThirst extends GEvent implements Listener {
 	public EThirst(JavaPlugin jp) {
 	    super(jp);
     }
