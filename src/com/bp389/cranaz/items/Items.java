@@ -134,11 +134,34 @@ public final class Items
 			Bukkit.getServer().addRecipe(unshapes.get(i));
 		}
 	}
-	public static ItemStack customSSword(){
-		ItemStack is = new ItemStack(Material.STONE_SWORD);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Massue");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Pour zigouiller du macchabé !" + ChatColor.RESET));
+	/**
+	 * 
+	 * @param item L'objet source
+	 * @param name Le nom de l'objet
+	 * @param lore Sa description
+	 * @return L'objet modifie
+	 */
+	private static final ItemStack getLoredItem(final ItemStack item, final String name, final String... lore){
+		final ItemStack is = item;
+		final ItemMeta im = is.getItemMeta();
+		im.setDisplayName(name);
+		im.setLore(Arrays.asList(lore));
+		is.setItemMeta(im);
+		return is;
+	}
+	/**
+	 * 
+	 * @param m Le type
+	 * @see #getLoredItem(ItemStack, String, String...)
+	 */
+	private static final ItemStack getLoredItem(final Material m, final String n, final String... ss){
+		return getLoredItem(new ItemStack(m), n, ss);
+	}
+	public static ItemStack hospitalShirt(){
+		ItemStack is = new ItemStack(Material.LEATHER_CHESTPLATE);
+		LeatherArmorMeta im = (LeatherArmorMeta)is.getItemMeta();
+		im.setDisplayName("Blouse");
+		im.setColor(Color.WHITE);
 		is.setItemMeta(im);
 		return is;
 	}
@@ -149,150 +172,6 @@ public final class Items
 		bm.setTitle(title);
 		bm.setLore(Arrays.asList(dotSplitLore.split(".")));
 		is.setItemMeta(bm);
-		return is;
-	}
-	public static ItemStack bagItemStack(){
-		ItemStack temp = new ItemStack(BAG);
-		ItemMeta im = temp.getItemMeta();
-		im.setDisplayName(ChatColor.BOLD + "Sac a dos" + ChatColor.RESET);
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Permet de porter des objets.", ChatColor.ITALIC + "Shift + clic droit pour l'ouvrir" + ChatColor.RESET));
-		temp.setItemMeta(im);
-		return temp;
-	}
-	public static ItemStack customIAxe(){
-		ItemStack is = new ItemStack(Material.IRON_AXE);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Hache");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Bien aiguisee en plus !" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customISword(){
-		ItemStack is = new ItemStack(Material.IRON_SWORD);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Machette");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Fais gaffe a ta main !" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customBow(){
-		ItemStack is = new ItemStack(Material.BOW);
-		ItemMeta im = is.getItemMeta();
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Pour tuer du zombie en toute discretion !" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack getAmmoStack(ItemStack from){
-		ItemMeta im = from.getItemMeta();
-		ItemStack temp = from;
-		if(from.getType() == Material.BLAZE_POWDER){
-			im.setDisplayName("Balles de Mosin Nagant");
-			im.setLore(Arrays.asList(ChatColor.ITALIC + "Balles pour fusil de sniper type Mosin", ChatColor.ITALIC + "Rechargement balle par balle" + ChatColor.RESET));
-			temp.setItemMeta(im);
-			return temp;
-		}
-		else if(from.getType() == Material.GOLD_NUGGET){
-			im.setDisplayName("Chargeurs d'AK-47");
-			im.setLore(Arrays.asList(ChatColor.ITALIC + "Chargeurs pour fusil d'assaut type AK-47" + ChatColor.RESET));
-			temp.setItemMeta(im);
-			return temp;
-		}
-		else if(from.getType() == Material.FIREBALL){
-			im.setDisplayName("Grenades de M320H");
-			im.setLore(Arrays.asList(ChatColor.ITALIC + "Grenades pour lance-grenades type M320H", ChatColor.ITALIC + "Une seule grenade par chambre" + ChatColor.RESET));
-			temp.setItemMeta(im);
-			return temp;
-		}
-		else if(from.getType() == Material.MAGMA_CREAM){
-			im.setDisplayName("Chargeurs de BAR Browning");
-			im.setLore(Arrays.asList(ChatColor.ITALIC + "Chargeurs pour fusil mitrailleur type BAR" + ChatColor.RESET));
-			temp.setItemMeta(im);
-			return temp;
-		}
-		else if(from.getType() == Material.SLIME_BALL){
-			im.setDisplayName("Balles de Smith");
-			im.setLore(Arrays.asList(ChatColor.ITALIC + "Balles pour Colt type Smith" + ChatColor.RESET));
-			temp.setItemMeta(im);
-			return temp;
-		}
-		return temp;
-	}
-	public static ItemStack customPaper()
-	{
-		ItemStack is = new ItemStack(Material.PAPER);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Bandages");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Ca peut servir..." + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customGApple()
-	{
-		ItemStack is = new ItemStack(Material.GOLDEN_APPLE);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Grande poche de sang");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "On transfuse ?" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customApple()
-	{
-		ItemStack is = new ItemStack(Material.APPLE);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Petite poche de sang");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "On transfuse ?" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customPPie()
-	{
-		ItemStack is = new ItemStack(Material.PUMPKIN_PIE);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Amphetamines");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "C'est de la bonne !" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customCamo()
-	{
-		ItemStack is = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Tenue de camouflage - Plastron");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Permet d'etre vu de moins loin. - 15 %" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customCamo_helmet(){
-		ItemStack is = new ItemStack(Material.CHAINMAIL_HELMET);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Tenue de camouflage - Casque");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Permet d'etre vu de moins loin. - 5 %" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customCamo_boots(){
-		ItemStack is = new ItemStack(Material.CHAINMAIL_BOOTS);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Tenue de camouflage - Bottes");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Permet d'etre vu de moins loin. - 20 %" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-	}
-	public static ItemStack customCamo_pants(){
-		ItemStack is = new ItemStack(Material.CHAINMAIL_LEGGINGS);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Tenue de camouflage - Pantalon");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Permet d'etre vu de moins loin. - 20 %" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
-
-	}
-	public static ItemStack hospitalShirt(){
-		ItemStack is = new ItemStack(Material.LEATHER_CHESTPLATE);
-		LeatherArmorMeta im = (LeatherArmorMeta)is.getItemMeta();
-		im.setDisplayName("Blouse");
-		im.setColor(Color.WHITE);
-		is.setItemMeta(im);
 		return is;
 	}
 	public static ItemStack genTShirt(ItemStack lFrom)
@@ -373,14 +252,71 @@ public final class Items
 		temp.setItemMeta(lam);
 		return temp;
 	}
-	public static ItemStack customWater()
-	{
-		ItemStack is = new ItemStack(Material.POTION);
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Bouteille d'eau");
-		im.setLore(Arrays.asList(ChatColor.ITALIC + "Pour tous les types de soif !" + ChatColor.RESET));
-		is.setItemMeta(im);
-		return is;
+	public static ItemStack customFence(){
+		return getLoredItem(Material.FENCE, "Barricade", "Pour se protéger en toutes cironctances !");
+	}
+	public static ItemStack customSSword(){
+		return getLoredItem(Material.STONE_SWORD, "Massue", "Pour zigouiller du macchabé !");
+	}
+	public static ItemStack bagItemStack(){
+		return getLoredItem(BAG, "Sac a dos", 
+				ChatColor.ITALIC + "Permet de porter des objets.", ChatColor.ITALIC + "Shift + clic droit pour l'ouvrir" + ChatColor.RESET);
+	}
+	public static ItemStack customIAxe(){
+		return getLoredItem(Material.IRON_AXE, "Hache", "Bien aiguisee en plus !");
+	}
+	public static ItemStack customISword(){
+		return getLoredItem(Material.IRON_SWORD, "Machette", "Fais gaffe a ta main !");
+	}
+	public static ItemStack customBow(){
+		return getLoredItem(Material.BOW, "Arc", "Pour tuer du zombie en toute discretion !");
+	}
+	public static ItemStack getAmmoStack(ItemStack from){
+		if(from.getType() == Material.BLAZE_POWDER){
+			return getLoredItem(from, "Balles de Mosin Nagant", 
+					ChatColor.ITALIC + "Balles pour fusil de sniper type Mosin", ChatColor.ITALIC + "Rechargement balle par balle" + ChatColor.RESET);
+		}
+		else if(from.getType() == Material.GOLD_NUGGET){
+			return getLoredItem(from, "Chargeur(s) d'AK-47", "Chargeurs pour fusil d'assaut type AK-47");
+		}
+		else if(from.getType() == Material.FIREBALL){
+			return getLoredItem(from, "Grenades de M320H", 
+					ChatColor.ITALIC + "Grenades pour lance-grenades type M320H", ChatColor.ITALIC + "Une seule grenade par chambre" + ChatColor.RESET);
+		}
+		else if(from.getType() == Material.MAGMA_CREAM){
+			return getLoredItem(from, "Chargeur(s) de BAR Browning", "Chargeurs pour fusil mitrailleur type BAR");
+		}
+		else if(from.getType() == Material.SLIME_BALL){
+			return getLoredItem(from, "Balles de Smith", "Balles pour colt type Smith");
+		}
+		return from;
+	}
+	public static ItemStack customPaper(){
+		return getLoredItem(Material.PAPER, "Bandages", "Ca peut servir...");
+	}
+	public static ItemStack customGApple(){
+		return getLoredItem(Material.GOLDEN_APPLE, "Grande poche de sang", "On transfuse ?");
+	}
+	public static ItemStack customApple(){
+		return getLoredItem(Material.APPLE, "Petite poche de sang", "On transfuse ?");
+	}
+	public static ItemStack customPPie(){
+		return getLoredItem(Material.PUMPKIN_PIE, "Amphétamines", "C'est de la bonne");
+	}
+	public static ItemStack customCamo(){
+		return getLoredItem(Material.CHAINMAIL_CHESTPLATE, "Tenue de camouflage - plastron", "Permet d'etre vu de moins loin - 15 %");
+	}
+	public static ItemStack customCamo_helmet(){
+		return getLoredItem(Material.CHAINMAIL_HELMET, "Tenue de camouflage - casque", "Permet d'etre vu de moins loin - 5 %");
+	}
+	public static ItemStack customCamo_boots(){
+		return getLoredItem(Material.CHAINMAIL_BOOTS, "Tenue de camouflage - bottes", "Permet d'etre vu de moins loin - 20 %");
+	}
+	public static ItemStack customCamo_pants(){
+		return getLoredItem(Material.CHAINMAIL_LEGGINGS, "Tenue de camouflage - pantalon", "Permet d'etre vu de moins loin - 20 %");
+	}
+	public static ItemStack customWater(){
+		return getLoredItem(Material.POTION, "Bouteille d'eau", "Pour tous les types de soif !");
 	}
 	public static class Subs
 	{
@@ -414,27 +350,15 @@ public final class Items
 				ItemMeta im = theIS.getItemMeta(), im2 = another.getItemMeta();
 				return im.getDisplayName().equalsIgnoreCase(im2.getDisplayName());
 			}
-			private static ItemStack arterial()
-			{
-				ItemStack is = new ItemStack(Material.PUMPKIN_PIE);
-				ItemMeta im = is.getItemMeta();
-				im.setDisplayName("Poison arteriel");
-				im.setLore(Arrays.asList("Augmente la pression sanguine de la cible.",
+			private static ItemStack arterial(){
+				return getLoredItem(Material.PUMPKIN_PIE, "Poison arteriel", "Augmente la pression sanguine de la cible.",
 						"Cause des dommages directs moyens",
-						"Fait effet après 45 secondes."));
-				is.setItemMeta(im);
-				return is;
+						"Fait effet après 45 secondes.");
 			}
-			private static ItemStack neurotoxic()
-			{
-				ItemStack is = new ItemStack(Material.PUMPKIN_PIE);
-				ItemMeta im = is.getItemMeta();
-				im.setDisplayName("Poison neurotoxique");
-				im.setLore(Arrays.asList("Affaiblit fortement le joueur cible.",
+			private static ItemStack neurotoxic(){
+				return getLoredItem(Material.PUMPKIN_PIE, "Poison neurotoxique", "Affaiblit fortement le joueur cible.",
 						"Ne cause AUCUN dommage direct.",
-						"Fait effet 2 minutes après injection."));
-				is.setItemMeta(im);
-				return is;
+						"Fait effet 2 minutes après injection.");
 			}
 		}
 	}

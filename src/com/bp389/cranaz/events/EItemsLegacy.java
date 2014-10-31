@@ -226,6 +226,7 @@ public final class EItemsLegacy extends GEvent implements Listener{
 		final int distance = Double.valueOf(e.getBlock().getLocation().distance(new Location(e.getPlayer().getWorld(), 110D, 56D, 71D))).intValue();
 		if(distance <= 20){
 			e.setCancelled(true);
+			return;
 		}
 		boolean cancel = true;
 		Sound s = null;
@@ -254,12 +255,13 @@ public final class EItemsLegacy extends GEvent implements Listener{
 			cancel = false;
 			break;
 		case FENCE:
-			cancel = false;
+			if(e.getPlayer().getItemInHand().getType() == Material.IRON_AXE)
+				cancel = false;
 			break;
 		}
 		if(s != null)
 			e.getBlock().getWorld().playSound(e.getBlock().getLocation(), s, 15F, 63F);
-		if(!cancel && !(m.toString().toLowerCase().contains("SIGN") || m == Material.FENCE)){
+		if(!cancel && !(m.toString().toLowerCase().contains("sign") || m == Material.FENCE)){
 			new BukkitRunnable(){
 				@Override
 				public void run() {

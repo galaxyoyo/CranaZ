@@ -421,13 +421,22 @@ public final class LootRefactor {
         }
 		return true;
 	}
-	@SuppressWarnings("static-access")
-    public UnpickableItem spawnPackLoot(final Location loc, final EnumPacks pack)
+	public UnpickableItem spawnPackLoot(final Location loc, final ItemStack pack)
 	{
-		if(pack != EnumPacks.NULL){
-			return dropUItem(loc, pack.items().get(this.random.nextInt(pack.items().size())).item());
+		if(pack != null && pack.getType() != Material.AIR){
+			return dropUItem(loc, pack);
 		}
 		return null;
+	}
+	public final ItemStack randomIcon(final Inventory loot){
+		ItemStack is = new ItemStack(Material.ARROW);
+		for(int i = 0; i < loot.getContents().length;i++){
+			if(loot.getContents()[i] != null && loot.getContents()[i].getType() != Material.AIR){
+				is = loot.getContents()[i];
+				break;
+			}
+		}
+		return is;
 	}
 	public class ThreadSpawner extends BukkitRunnable
 	{
@@ -457,7 +466,7 @@ public final class LootRefactor {
 	                	if(i != null)
 	                		i.die();
 	                	inv = randomInvLoot(pack);
-	                	i = spawnPackLoot(loc, pack);
+	                	i = spawnPackLoot(loc, randomIcon(inv));
 	                }
 					if(!pointExist(packType, loc, pack) || pack == EnumPacks.NULL || !running){
 						if(i != null)

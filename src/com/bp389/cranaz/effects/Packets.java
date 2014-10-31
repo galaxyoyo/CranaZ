@@ -1,7 +1,6 @@
 package com.bp389.cranaz.effects;
 
 import net.minecraft.server.v1_7_R3.Packet;
-import net.minecraft.server.v1_7_R3.PacketPlayOutBed;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,10 +26,5 @@ public final class Packets {
 				continue;
 			sendPacket(pl, p);
 		}
-	}
-	public static void sendRevivePacket(Player p){
-		//TODO
-		Packets.broadcastPacket(new PacketPlayOutBed(((CraftPlayer)p).getHandle(), p.getLocation().getBlockX(),
-				p.getEyeLocation().getBlockY() - 1, p.getLocation().getBlockY()), null);
 	}
 }
