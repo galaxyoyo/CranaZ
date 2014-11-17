@@ -253,7 +253,7 @@ public final class Items
 		return temp;
 	}
 	public static ItemStack customFence(){
-		return getLoredItem(Material.FENCE, "Barricade", "Pour se protéger en toutes cironctances !");
+		return getLoredItem(Material.FENCE, "Barricade", "Pour se protéger en toutes circonstances !");
 	}
 	public static ItemStack customSSword(){
 		return getLoredItem(Material.STONE_SWORD, "Massue", "Pour zigouiller du macchabé !");

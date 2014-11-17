@@ -1,6 +1,7 @@
 package com.bp389.cranaz.events;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -22,10 +23,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -46,6 +47,7 @@ import com.shampaggon.crackshot.events.WeaponPreShootEvent;
 import com.shampaggon.crackshot.events.WeaponScopeEvent;
 
 public final class EIA extends GEvent implements Listener{
+	private static List<Player> hasShoot = new ArrayList<Player>();
 	public EIA(JavaPlugin jp) {
 	    super(jp);
     }
@@ -73,7 +75,7 @@ public final class EIA extends GEvent implements Listener{
 	}
 	@EventHandler
 	public void entityExplode(final EntityExplodeEvent e){
-		Bukkit.getScheduler().runTask(plugin, new BukkitRunnable(){
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(Entity entity : e.getEntity().getNearbyEntities(60D, 20D, 60D)){
@@ -122,12 +124,22 @@ public final class EIA extends GEvent implements Listener{
 				}
 			}.runTaskLater(plugin, 6000L);
 		}
+		if(hasShoot.contains(e.getPlayer()))
+			return;
+		hasShoot.add(e.getPlayer());
+		Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable(){
+			@Override
+            public void run() {
+	            hasShoot.remove(e.getPlayer());
+            }
+		}, 30L * 20L);
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable(){
 			@Override
 			public void run() {
+				final CraftPlayer cp = (CraftPlayer)e.getPlayer();
+				CraftEntity ce;
 				for(Entity entity : e.getPlayer().getNearbyEntities(55D, 15D, 55D)){
-					CraftPlayer cp = (CraftPlayer)e.getPlayer();
-					CraftEntity ce = (CraftEntity)entity;
+					ce = (CraftEntity)entity;
 					if(ce.getHandle() instanceof EnhancedZombie){
 						((EnhancedZombie)ce.getHandle()).move(cp.getLocation());
 					}
