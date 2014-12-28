@@ -60,4 +60,4 @@ permissions:
       clp.pack.delete: true
   cranaz.basic:
     description: Permission basique de CranaZ
-    default: op
+    default: true

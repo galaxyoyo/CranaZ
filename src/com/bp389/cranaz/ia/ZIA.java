@@ -123,7 +123,7 @@ public class ZIA extends Loadable
 	    				sender.sendMessage("Veuillez vous connecter en tant que joueur.");
 	    		}
 	    		else if(args[0].equalsIgnoreCase("state")){
-	    			if(!(sender instanceof Player)){
+	    			if(!(sender instanceof Player) || !sender.isOp()){
 	    				return true;
 	    			}
 	    			Player p = (Player)sender;
