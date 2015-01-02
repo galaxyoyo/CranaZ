@@ -1,31 +1,20 @@
 package com.bp389.cranaz.ia.entities;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.server.v1_7_R3.Blocks;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityWolf;
-import net.minecraft.server.v1_7_R3.EntityZombie;
-import net.minecraft.server.v1_7_R3.EnumDifficulty;
-import net.minecraft.server.v1_7_R3.GenericAttributes;
-import net.minecraft.server.v1_7_R3.ItemStack;
-import net.minecraft.server.v1_7_R3.Items;
-import net.minecraft.server.v1_7_R3.PathfinderGoalFloat;
-import net.minecraft.server.v1_7_R3.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R3.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_7_R3.PathfinderGoalMoveThroughVillage;
-import net.minecraft.server.v1_7_R3.PathfinderGoalMoveTowardsRestriction;
-import net.minecraft.server.v1_7_R3.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_7_R3.PathfinderGoalOpenDoor;
-import net.minecraft.server.v1_7_R3.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_7_R3.PathfinderGoalRandomStroll;
-import net.minecraft.server.v1_7_R3.PathfinderGoalSelector;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_8_R1.DifficultyDamageScaler;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityPigZombie;
+import net.minecraft.server.v1_8_R1.EntityZombie;
+import net.minecraft.server.v1_8_R1.EnumDifficulty;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.ItemStack;
+import net.minecraft.server.v1_8_R1.Items;
+import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_8_R1.PathfinderGoalMeleeAttack;
+import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_7_R3.util.UnsafeList;
+import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +27,8 @@ import com.bp389.cranaz.ia.VirtualSpawner;
  *
  */
 public class EnhancedZombie extends EntityZombie{
-	private static JavaPlugin plugin;
+	@SuppressWarnings("unused")
+    private static JavaPlugin plugin;
 	//True si c'est un zombie joueur
 	public boolean ipf = false;
 	//Constantes explicites
@@ -46,40 +36,23 @@ public class EnhancedZombie extends EntityZombie{
 	public static void initPlugin(JavaPlugin jp){plugin = jp;}
 	public EnhancedZombie(World world) {
 		super(world);
-		try {
-			Field bField = PathfinderGoalSelector.class.getDeclaredField("b");
-			bField.setAccessible(true);
-			Field cField = PathfinderGoalSelector.class.getDeclaredField("c");
-			cField.setAccessible(true);
-			bField.set(goalSelector, new UnsafeList<PathfinderGoalSelector>());
-			bField.set(targetSelector, new UnsafeList<PathfinderGoalSelector>());
-			cField.set(goalSelector, new UnsafeList<PathfinderGoalSelector>());
-			cField.set(targetSelector, new UnsafeList<PathfinderGoalSelector>());
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-		this.goalSelector.a(0, new PathfinderGoalFloat(this));
-		this.goalSelector.a(4, new PathfinderGoalMeleeAttack(this, EntityWolf.class, 1.0D, true));
-		this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, EntityHuman.class, 1.0D, false));
-		this.goalSelector.a(5, new PathfinderGoalMoveTowardsRestriction(this, 1.0D));
-		this.goalSelector.a(6, new PathfinderGoalMoveThroughVillage(this, 1.0D, false));
-		this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
-		this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-		this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
-		this.goalSelector.a(8, new PathfinderGoalOpenDoor(this, true));
-		this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget(this, EntityWolf.class, 0, true));
-		this.targetSelector.a(2, new EnhancedZombiePathfinderGoal(this, EntityHuman.class, 0, true, plugin));
 	}
 	@Override
-	protected void aC() {
-		super.aC();
+	protected void n() {
+	    this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true, new Class[] { EntityPigZombie.class }));
+	    this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, EntityHuman.class, 1.0D, false));
+	    this.targetSelector.a(2, new EnhancedZombiePathfinderGoal(this, EntityHuman.class, true));
+	}
+	@Override
+	protected void aW() {
+		super.aW();
 		this.getAttributeInstance(GenericAttributes.b).setValue(FOLLOW_RANGE);
 		this.getAttributeInstance(GenericAttributes.d).setValue(SPEED);
 		final int tmp = this.random.nextInt(30);
-		this.getAttributeInstance(GenericAttributes.a).setValue(Integer.valueOf(tmp < 20 ? 20 : tmp).doubleValue());
+		this.getAttributeInstance(GenericAttributes.maxHealth).setValue(Integer.valueOf(tmp < 20 ? 20 : tmp).doubleValue());
 	}
 	@Override
-	protected void getRareDrop(int i) {
+	protected void getRareDrop() {
 		switch (this.random.nextInt(5)) {
 		case 0:
 			this.a(Items.IRON_INGOT, 1);
@@ -125,7 +98,7 @@ public class EnhancedZombie extends EntityZombie{
 			case 1:
 				setVillager(false);
 			}
-			return this.world.difficulty != EnumDifficulty.PEACEFUL;
+			return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
 		}
 		return false;
 	}
@@ -164,18 +137,15 @@ public class EnhancedZombie extends EntityZombie{
 		this.ipf = true;
 	}
 	@Override
-	protected void bC() {
-		super.bC();
-		if (this.random.nextFloat() < (this.world.difficulty == EnumDifficulty.HARD ? 0.05F : 0.01F)) {
+	protected void a(DifficultyDamageScaler dds) {
+		super.a(dds);
+		if (this.random.nextFloat() < (this.world.getDifficulty() == EnumDifficulty.HARD ? 0.05F : 0.01F)) {
 			final int i = this.random.nextInt(3);
-			switch(i){
-			case 0:
-				this.setEquipment(0, new ItemStack(Items.STONE_SWORD));
-				break;
-			case 1:
-				this.setEquipment(0, new ItemStack(Blocks.TORCH));
-				break;
-			}
+			if (i == 0) {
+		        setEquipment(0, new ItemStack(Items.STONE_SWORD));
+		      } else {
+		        setEquipment(0, new ItemStack(Items.WOODEN_SWORD));
+		      }
 		}
 	}
 	public void move(Location loc){

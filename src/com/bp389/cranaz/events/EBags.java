@@ -52,7 +52,7 @@ public final class EBags extends GEvent implements Listener {
 		}
 	}
 	@EventHandler
-	public void playerDie4(PlayerDeathEvent e){
+	public void playerDie(PlayerDeathEvent e){
 		IPlayerFactor.clearBag(e.getEntity());
 	}
 }

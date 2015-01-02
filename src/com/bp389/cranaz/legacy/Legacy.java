@@ -2,7 +2,6 @@ package com.bp389.cranaz.legacy;
 
 import java.io.File;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,7 +44,7 @@ public final class Legacy extends Loadable {
 		if(arg1.getName().equalsIgnoreCase("logout"))
 		{
 			arg0.sendMessage("Déconnexion dans 3 secondes...");
-			Bukkit.getScheduler().runTaskLater(Loader.plugin, new BukkitRunnable(){
+			new BukkitRunnable(){
 				@Override
                 public void run() {
 					if(!(arg0 instanceof Player))
@@ -54,7 +53,7 @@ public final class Legacy extends Loadable {
 					NQHandler.forceRemove(p);
 					p.kickPlayer("Déconnecté.");
                 }
-			}, 3L * 20L);
+			}.runTaskLater(Loader.plugin, 3L * 20L);
 		}
 		return true;
 	}

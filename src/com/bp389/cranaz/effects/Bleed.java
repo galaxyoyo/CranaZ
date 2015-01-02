@@ -3,7 +3,6 @@ package com.bp389.cranaz.effects;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -80,8 +79,8 @@ public final class Bleed {
 	public static final boolean hasEffect(Player p, PotionEffect pe){
 		return p.hasPotionEffect(pe.getType());
 	}
-	public static final void neurtoxicPoison(final Player target){
-		Bukkit.getScheduler().runTaskLater(jp, new BukkitRunnable(){
+    public static final void neurtoxicPoison(final Player target){
+		new BukkitRunnable(){
 			@Override
             public void run() {
 	            if(target.isOnline()){
@@ -92,7 +91,7 @@ public final class Bleed {
 		            target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 120 * 20, 1));
 	            }
             }
-		}, 120L * 20L);
+		}.runTaskLater(jp, 120L * 20L);
 	}
 	public static final void blood(int lvl, final Player target){
 		if(lvl == -1)
@@ -109,8 +108,8 @@ public final class Bleed {
 			target.setHealth(d.getMaxHealth());
 		}
 	}
-	public static final void arterialPoison(final Player target){
-		Bukkit.getScheduler().runTaskLater(jp, new BukkitRunnable(){
+    public static final void arterialPoison(final Player target){
+		new BukkitRunnable(){
 			@Override
             public void run() {
 	            if(target.isOnline()){
@@ -120,6 +119,6 @@ public final class Bleed {
 		            target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 50 * 20, 0));
 	            }
             }
-		}, 45L * 20L);
+		}.runTaskLater(jp, 45L * 20L);
 	}
 }

@@ -16,7 +16,7 @@ import static com.bp389.cranaz.items.Items.*;
 public enum Packs {
 	//Le premier argument est l'objet représentatif, le deuxième le taux de rareté
 	RAW_PORK(new ItemStack(Material.PORK), rarity.COMMON),
-	WATER(customWater(), rarity.COMMON),
+	WATER(customWater(), 9),
 	SHIRT(genTShirt(new ItemStack(Material.LEATHER_CHESTPLATE)), rarity.GREAT),
 	PANT(genTShirt(new ItemStack(Material.LEATHER_LEGGINGS)), rarity.GREAT),
 	BOOTS(genTShirt(new ItemStack(Material.LEATHER_BOOTS)), rarity.GREAT),
@@ -79,6 +79,6 @@ public enum Packs {
 	public int rare(){return this.rare;}
 	public static class rarity
 	{
-		public static final int COMMON = 4, MEDIUM = 5, GREAT = 6, RARE = 7;
+		public static final int COMMON = 8, MEDIUM = 10, GREAT = 11, RARE = 15;
 	}
 }

@@ -1,6 +1,5 @@
 package com.bp389.cranaz.events;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,7 +32,7 @@ public final class EThirst extends GEvent implements Listener {
 	 */
 	
 	@EventHandler
-	public void playerJoin2(PlayerJoinEvent e)
+	public void playerJoin(PlayerJoinEvent e)
 	{
 		if(!e.getPlayer().hasPlayedBefore())
 			e.getPlayer().setExp(0.99F);
@@ -54,23 +53,23 @@ public final class EThirst extends GEvent implements Listener {
 	public void expPicked(PlayerExpChangeEvent e){
 		e.setAmount(0);
 	}
-	@EventHandler
-	public void playerDie2(PlayerDeathEvent e){
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, new FillExp(e.getEntity()));
+    @EventHandler
+	public void playerDie(PlayerDeathEvent e){
+		new FillExp(e.getEntity()).runTaskAsynchronously(plugin);
 	}
 	class FillExp extends BukkitRunnable
 	{
 		private Player p;
 		public FillExp(Player p){this.p = p;}
-		@Override
+        @Override
 		public void run() {
 			while(p.isDead());
-			Bukkit.getScheduler().runTask(plugin, new BukkitRunnable(){
+			new BukkitRunnable(){
 				@Override
 				public void run() {
 					p.setExp(0.99F);
 				}
-			});
+			}.runTask(plugin);
 		}
 	}
 }

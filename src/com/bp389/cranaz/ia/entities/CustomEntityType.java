@@ -4,18 +4,18 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.server.v1_7_R3.BiomeBase;
-import net.minecraft.server.v1_7_R3.BiomeMeta;
-import net.minecraft.server.v1_7_R3.EntityCaveSpider;
-import net.minecraft.server.v1_7_R3.EntityCreeper;
-import net.minecraft.server.v1_7_R3.EntityEnderman;
-import net.minecraft.server.v1_7_R3.EntityInsentient;
-import net.minecraft.server.v1_7_R3.EntitySkeleton;
-import net.minecraft.server.v1_7_R3.EntitySlime;
-import net.minecraft.server.v1_7_R3.EntitySpider;
-import net.minecraft.server.v1_7_R3.EntityTypes;
-import net.minecraft.server.v1_7_R3.EntityWitch;
-import net.minecraft.server.v1_7_R3.EntityZombie;
+import net.minecraft.server.v1_8_R1.BiomeBase;
+import net.minecraft.server.v1_8_R1.BiomeMeta;
+import net.minecraft.server.v1_8_R1.EntityCaveSpider;
+import net.minecraft.server.v1_8_R1.EntityCreeper;
+import net.minecraft.server.v1_8_R1.EntityEnderman;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.EntitySkeleton;
+import net.minecraft.server.v1_8_R1.EntitySlime;
+import net.minecraft.server.v1_8_R1.EntitySpider;
+import net.minecraft.server.v1_8_R1.EntityTypes;
+import net.minecraft.server.v1_8_R1.EntityWitch;
+import net.minecraft.server.v1_8_R1.EntityZombie;
 
 import org.bukkit.entity.EntityType;
 

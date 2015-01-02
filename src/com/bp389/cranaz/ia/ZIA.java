@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-import net.minecraft.server.v1_7_R3.Packet;
+import net.minecraft.server.v1_8_R1.Packet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,8 +21,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -100,7 +100,7 @@ public class ZIA extends Loadable
 	    					pt.getInventory().clear();
 	    					ItemStack is = Items.customSSword();
 	    					is.setDurability(Integer.valueOf(85).shortValue());
-	    					pt.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is, csu.generateWeapon("Smith"), Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
+	    					pt.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is, /*csu.generateWeapon("Smith"),*/ Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
 	    					ps.remove(pt);
 	    				}
 	    				else
@@ -259,7 +259,8 @@ public class ZIA extends Loadable
 		 * 
 		 * @return Le nombre de cases d'inventaires (x9) nécessaire pour contenir une case par joueur
 		 */
-		public static int iSize(){
+		@SuppressWarnings("deprecation")
+        public static int iSize(){
 			double x = Integer.valueOf(Bukkit.getServer().getOnlinePlayers().length).doubleValue(), y = 9D;
 			return Double.valueOf(math_supMultiplier(x, y)).intValue();
 		}
@@ -273,12 +274,13 @@ public class ZIA extends Loadable
 			p.getInventory().clear();
 			ItemStack is = Items.customSSword();
 			is.setDurability(Integer.valueOf(85).shortValue());
-			p.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is, csu.generateWeapon("Smith"), Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
+			p.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is, /*csu.generateWeapon("Smith"),*/ Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
 		}
 		public static void sendPacket(Player p, Packet packet){
 			((CraftPlayer)p).getHandle().playerConnection.sendPacket(packet);
 		}
-		public static void sendPacketPos(Location l, int radius, Packet p, Player excluded){
+		@SuppressWarnings("deprecation")
+        public static void sendPacketPos(Location l, int radius, Packet p, Player excluded){
 			for(Player pl : Bukkit.getServer().getOnlinePlayers()){
 				if(excluded != null && pl.equals(excluded))
 					continue;

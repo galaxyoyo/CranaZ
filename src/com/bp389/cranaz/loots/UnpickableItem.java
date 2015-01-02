@@ -1,9 +1,9 @@
 package com.bp389.cranaz.loots;
 
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityItem;
-import net.minecraft.server.v1_7_R3.ItemStack;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityItem;
+import net.minecraft.server.v1_8_R1.ItemStack;
+import net.minecraft.server.v1_8_R1.World;
 
 /**
  * Représente une entité objet non recupérable et non stackable
@@ -15,8 +15,7 @@ public final class UnpickableItem extends EntityItem {
 	    super(world, d0, d1, d2, itemstack);
     }
 	@Override
-	public void h() {
-	}
+	public void h() {}
 	@Override
-	public void b_(EntityHuman arg0) {}
+	public void d(EntityHuman arg0) {}
 }

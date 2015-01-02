@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Random;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.minecraft.server.v1_7_R3.Blocks;
-import net.minecraft.server.v1_7_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R1.Blocks;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,9 +16,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,9 +73,9 @@ public final class EIA extends GEvent implements Listener{
 			temps.add(name);
 		} catch (Exception e) {e.printStackTrace();}
 	}
-	@EventHandler
+    @EventHandler
 	public void entityExplode(final EntityExplodeEvent e){
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable(){
+    	new BukkitRunnable(){
 			@Override
 			public void run() {
 				for(Entity entity : e.getEntity().getNearbyEntities(60D, 20D, 60D)){
@@ -85,7 +85,7 @@ public final class EIA extends GEvent implements Listener{
 					}
 				}
 			}
-		});
+		}.runTaskAsynchronously(plugin);
 	}
 	@SuppressWarnings("deprecation")
 	@EventHandler
@@ -127,13 +127,13 @@ public final class EIA extends GEvent implements Listener{
 		if(hasShoot.contains(e.getPlayer()))
 			return;
 		hasShoot.add(e.getPlayer());
-		Bukkit.getScheduler().runTaskLater(plugin, new BukkitRunnable(){
+		new BukkitRunnable(){
 			@Override
             public void run() {
 	            hasShoot.remove(e.getPlayer());
             }
-		}, 30L * 20L);
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, new BukkitRunnable(){
+		}.runTaskLater(plugin, 30L * 20L);
+		new BukkitRunnable(){
 			@Override
 			public void run() {
 				final CraftPlayer cp = (CraftPlayer)e.getPlayer();
@@ -145,7 +145,7 @@ public final class EIA extends GEvent implements Listener{
 					}
 				}
 			}
-		});
+		}.runTaskAsynchronously(plugin);
 	}
 	@EventHandler
 	public void mosinScope(WeaponScopeEvent e){
@@ -153,7 +153,7 @@ public final class EIA extends GEvent implements Listener{
 			if(e.isZoomIn()){
 				helmets.put(e.getPlayer(), e.getPlayer().getInventory().getHelmet());
 				e.getPlayer().getInventory().setHelmet(new ItemStack(Material.PUMPKIN));
-				ZIA.Utils.sendPacketPos(e.getPlayer().getLocation(), 50, new PacketPlayOutEntityEquipment(e.getPlayer().getEntityId(), 3, new net.minecraft.server.v1_7_R3.ItemStack(Blocks.AIR)), e.getPlayer());
+				ZIA.Utils.sendPacketPos(e.getPlayer().getLocation(), 50, new PacketPlayOutEntityEquipment(e.getPlayer().getEntityId(), 3, new net.minecraft.server.v1_8_R1.ItemStack(Blocks.AIR)), e.getPlayer());
 			}
 			else{
 				e.getPlayer().getInventory().setHelmet(helmets.get(e.getPlayer()));
@@ -237,7 +237,7 @@ public final class EIA extends GEvent implements Listener{
 		e.getPlayer().getWorld().setSpawnLocation(110, 56, 71);
 	}
 	@EventHandler
-	public void playerJoin3(PlayerJoinEvent e){
+	public void playerJoin(PlayerJoinEvent e){
 		if(!VirtualSpawner.init){
 			VirtualSpawner.startupAll(e.getPlayer().getWorld(), plugin);
 			VirtualSpawner.init = true;
@@ -252,7 +252,7 @@ public final class EIA extends GEvent implements Listener{
 		e.getPlayer().setResourcePack(ZIA.Utils.getPackLink(ZIA.Utils.LIGHT));
 	}
 	@EventHandler
-	public void playerDie3(PlayerDeathEvent e){
+	public void playerDie(PlayerDeathEvent e){
 		playings.remove(e.getEntity());
 		try{
 			if(e.getEntity().getLastDamageCause().getCause() == DamageCause.ENTITY_ATTACK){
