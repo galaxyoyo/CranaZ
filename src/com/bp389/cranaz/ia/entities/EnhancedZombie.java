@@ -9,7 +9,6 @@ import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.ItemStack;
 import net.minecraft.server.v1_8_R1.Items;
 import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_8_R1.PathfinderGoalMeleeAttack;
 import net.minecraft.server.v1_8_R1.World;
 
 import org.bukkit.Location;
@@ -40,7 +39,6 @@ public class EnhancedZombie extends EntityZombie{
 	@Override
 	protected void n() {
 	    this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true, new Class[] { EntityPigZombie.class }));
-	    this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, EntityHuman.class, 1.0D, false));
 	    this.targetSelector.a(2, new EnhancedZombiePathfinderGoal(this, EntityHuman.class, true));
 	}
 	@Override

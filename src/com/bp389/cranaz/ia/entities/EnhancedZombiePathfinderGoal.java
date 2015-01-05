@@ -23,11 +23,10 @@ import com.google.common.base.Predicates;
  *
  */
 public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackableTarget {
-	//Constantes explicitesS
+	//Constantes explicites
 	public static final int SNEAK = 6, WALK = 15, SPRINT = 30;
 	@SuppressWarnings("unused")
 	private JavaPlugin pl;
-	private EntityLiving target;
 	@SuppressWarnings("rawtypes")
 	public EnhancedZombiePathfinderGoal(EntityCreature entitycreature, Class oclass, boolean flag)
 	{
@@ -48,36 +47,36 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean a() {
-		double d0 = this.f();
+		final double d0 = this.f();
 		List list = this.e.world.a(this.a, this.e.getBoundingBox().grow(d0, 4.0D, d0),
 				Predicates.and(this.c, IEntitySelector.d));
 		Collections.sort(list, this.b);
 		if (list.isEmpty()) {
 			return false;
 		} else {
-			this.target = (EntityLiving)list.get(0);
-			if(this.target instanceof EntityHuman)
+			this.d = (EntityLiving)list.get(0);
+			if(this.d instanceof EntityHuman)
 			{
-				EntityHuman h = (EntityHuman)this.target;
+				EntityHuman h = (EntityHuman)this.d;
 				/*if(ReviveHandler.isHemoragic((CraftPlayer)h.getBukkitEntity()))
 					return false;*/
-				Location locH = target.getBukkitEntity().getLocation(), locZ = this.e.getBukkitEntity().getLocation();
+				Location locH = d.getBukkitEntity().getLocation(), locZ = this.e.getBukkitEntity().getLocation();
 				int distance = Double.valueOf(locH.distance(locZ)).intValue();
 				int camoVal = 0;
-				if(target.getEquipment(3) != null){
-					if(target.getEquipment(3).getItem() == Items.CHAINMAIL_CHESTPLATE)
+				if(d.getEquipment(3) != null){
+					if(d.getEquipment(3).getItem() == Items.CHAINMAIL_CHESTPLATE)
 						camoVal += 15;
 				}
-				if(target.getEquipment(1) != null){
-					if(target.getEquipment(1).getItem() == Items.CHAINMAIL_BOOTS)
+				if(d.getEquipment(1) != null){
+					if(d.getEquipment(1).getItem() == Items.CHAINMAIL_BOOTS)
 						camoVal += 20;
 				}
-				if(target.getEquipment(2) != null){
-					if(target.getEquipment(2).getItem() == Items.CHAINMAIL_LEGGINGS)
+				if(d.getEquipment(2) != null){
+					if(d.getEquipment(2).getItem() == Items.CHAINMAIL_LEGGINGS)
 						camoVal += 20;
 				}
-				if(target.getEquipment(4) != null){
-					if(target.getEquipment(4).getItem() == Items.CHAINMAIL_HELMET)
+				if(d.getEquipment(4) != null){
+					if(d.getEquipment(4).getItem() == Items.CHAINMAIL_HELMET)
 						camoVal += 5;
 				}
 				if(camoVal != 0){
@@ -85,16 +84,19 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 					distance += i;
 				}
 				if(distance <= SNEAK){
-					this.e.setGoalTarget(this.d, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
+					target();
 				}
 				else if(!h.isSneaking() && (distance <= WALK)){
-					this.e.setGoalTarget(this.d, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
+					target();
 				}
 				else if(h.isSprinting() && (distance <= SPRINT)){
-					this.e.setGoalTarget(this.d, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
+					target();
 				}
 			}
 		}
 		return false;
+	}
+	public void target(){
+		this.e.setGoalTarget(this.d, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
 	}
 }
