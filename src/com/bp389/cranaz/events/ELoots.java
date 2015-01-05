@@ -14,8 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.loots.EnumPacks;
 import com.bp389.cranaz.loots.LootRefactor;
-import com.bp389.cranaz.loots.Loots;
 import com.bp389.cranaz.loots.LootRefactor.ThreadSpawner;
+import com.bp389.cranaz.loots.Loots;
 
 public final class ELoots extends GEvent implements Listener{
 	public ELoots(JavaPlugin jp) {

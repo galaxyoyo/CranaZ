@@ -15,8 +15,8 @@ import static com.bp389.cranaz.items.Items.*;
  */
 public enum Packs {
 	//Le premier argument est l'objet représentatif, le deuxième le taux de rareté
-	RAW_PORK(new ItemStack(Material.PORK), rarity.COMMON),
-	WATER(customWater(), 9),
+	RAW_PORK(new ItemStack(Material.PORK), rarity.MEDIUM),
+	WATER(customWater(), 10),
 	SHIRT(genTShirt(new ItemStack(Material.LEATHER_CHESTPLATE)), rarity.GREAT),
 	PANT(genTShirt(new ItemStack(Material.LEATHER_LEGGINGS)), rarity.GREAT),
 	BOOTS(genTShirt(new ItemStack(Material.LEATHER_BOOTS)), rarity.GREAT),
@@ -26,18 +26,18 @@ public enum Packs {
 	WATCH(new ItemStack(Material.WATCH), rarity.MEDIUM),
 	TORCH(new ItemStack(Material.TORCH), rarity.COMMON),
 	MAP(new ItemStack(Material.MAP), rarity.GREAT),
-	SOUP(new ItemStack(Material.MUSHROOM_SOUP), rarity.COMMON),
+	SOUP(new ItemStack(Material.MUSHROOM_SOUP), rarity.MEDIUM),
 	MOSIN_AM(getAmmoStack(new ItemStack(Material.BLAZE_POWDER)), rarity.GREAT),
 	BOW(customBow(), rarity.RARE),
 	ARROW(new ItemStack(Material.ARROW, LootRefactor.random.nextInt(16)), rarity.MEDIUM),
-	PORK(new ItemStack(Material.GRILLED_PORK), rarity.COMMON),
-	STEAK(new ItemStack(Material.COOKED_BEEF), rarity.COMMON),
-	CHICKEN(new ItemStack(Material.COOKED_CHICKEN), rarity.COMMON),
-	BREAD(new ItemStack(Material.BREAD), rarity.COMMON),
-	FISH(new ItemStack(Material.COOKED_FISH), rarity.COMMON),
-	WMELON(new ItemStack(Material.MELON), rarity.COMMON),
-	WSEED(new ItemStack(Material.SEEDS), rarity.COMMON),
-	WHEAT(new ItemStack(Material.WHEAT), rarity.COMMON),
+	PORK(new ItemStack(Material.GRILLED_PORK), rarity.MEDIUM),
+	STEAK(new ItemStack(Material.COOKED_BEEF), rarity.MEDIUM),
+	CHICKEN(new ItemStack(Material.COOKED_CHICKEN), rarity.MEDIUM),
+	BREAD(new ItemStack(Material.BREAD), rarity.MEDIUM),
+	FISH(new ItemStack(Material.COOKED_FISH), rarity.MEDIUM),
+	WMELON(new ItemStack(Material.MELON), rarity.MEDIUM),
+	WSEED(new ItemStack(Material.SEEDS), rarity.MEDIUM),
+	WHEAT(new ItemStack(Material.WHEAT), rarity.MEDIUM),
 	STHOE(new ItemStack(Material.STONE_HOE), rarity.MEDIUM),
 	IAXE(customIAxe(), rarity.MEDIUM),
 	REDSTONE(new ItemStack(Material.REDSTONE), rarity.MEDIUM),
@@ -79,6 +79,6 @@ public enum Packs {
 	public int rare(){return this.rare;}
 	public static class rarity
 	{
-		public static final int COMMON = 8, MEDIUM = 10, GREAT = 11, RARE = 15;
+		public static final int COMMON = 7, MEDIUM = 9, GREAT = 11, RARE = 13;
 	}
 }

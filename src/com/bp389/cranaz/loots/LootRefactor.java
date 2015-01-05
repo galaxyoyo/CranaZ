@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityItem;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -329,7 +332,7 @@ public final class LootRefactor {
 		}
 	}
 	//
-	public void delLoot(Location loc, UnpickableItem i){
+	public void delLoot(Location loc, EntityItem i){
 		i.die();
 	}
 	/**
@@ -367,11 +370,15 @@ public final class LootRefactor {
 	 * @param item L'objet <<icône>>
 	 * @return L'objet lâché pour d'éventuelles modifications
 	 */
-	public UnpickableItem dropUItem(Location loc, ItemStack item)
-	{
-		UnpickableItem i = new UnpickableItem(((CraftWorld)loc.getWorld()).getHandle(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D, CraftItemStack.asNMSCopy(item));
-	    ((CraftWorld)loc.getWorld()).getHandle().addEntity(i, SpawnReason.CUSTOM);
-	    return i;
+	public EntityItem dropUItem(Location loc, ItemStack item){
+		EntityItem ei = new EntityItem(((CraftWorld)loc.getWorld()).getHandle(), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5, CraftItemStack.asNMSCopy(item)){
+	    	@Override
+	    	public void d(EntityHuman entityhuman){}
+	    	@Override
+	    	public void s_(){}
+	    };
+	    ei.world.addEntity(ei, SpawnReason.CUSTOM);
+	    return ei;
 	}
 	/**
 	 * 
@@ -421,7 +428,7 @@ public final class LootRefactor {
         }
 		return true;
 	}
-	public UnpickableItem spawnPackLoot(final Location loc, final ItemStack pack)
+	public EntityItem spawnPackLoot(final Location loc, final ItemStack pack)
 	{
 		if(pack != null && pack.getType() != Material.AIR){
 			return dropUItem(loc, pack);
@@ -429,7 +436,7 @@ public final class LootRefactor {
 		return null;
 	}
 	public final ItemStack randomIcon(final Inventory loot){
-		ItemStack is = new ItemStack(Material.ARROW);
+		ItemStack is = new ItemStack(Material.values()[LootRefactor.random.nextInt(Material.values().length)]);
 		for(int i = 0; i < loot.getContents().length;i++){
 			if(loot.getContents()[i] != null && loot.getContents()[i].getType() != Material.AIR){
 				is = loot.getContents()[i];
@@ -445,7 +452,7 @@ public final class LootRefactor {
 		private Location loc;
 		private boolean running = true;
 		private Inventory inv = null;
-		private UnpickableItem i = null;
+		private EntityItem i = null;
 		private Chunk c;
 		public ThreadSpawner(EnumPacks pack, int packType, Location loc){
 			this.pack = pack;
@@ -478,7 +485,7 @@ public final class LootRefactor {
 		                if(packType == PACK)
 		                	spawnPackChest(loc, pack);
 		}
-		public UnpickableItem getItemOf(){
+		public EntityItem getItemOf(){
 			return this.i;
 		}
 		public Inventory getInventoryOf(){
