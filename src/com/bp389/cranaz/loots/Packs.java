@@ -67,7 +67,8 @@ public enum Packs {
 	CRAFTBOOK(Items.Diaries.Utils.CRAFTS.toItemStack(), rarity.GREAT),
 	NEUROTOXIC(Items.Subs.Poison.NEUROTOXIC.toItem(), rarity.RARE),
 	ARTERIAL(Items.Subs.Poison.ARTERIAL.toItem(), rarity.RARE),
-	SSWORD(Items.customSSword(), rarity.GREAT);
+	SSWORD(Items.customSSword(), rarity.GREAT),
+	FLARE(Items.flare(), rarity.RARE);
 	private int rare;
 	private ItemStack item;
 	private Packs(ItemStack item, int rarity)

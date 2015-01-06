@@ -255,6 +255,10 @@ public final class Items
 	public static ItemStack customFence(){
 		return getLoredItem(Material.FENCE, "Barricade", "Pour se protéger en toutes circonstances !");
 	}
+	public static ItemStack flare(){
+		return getLoredItem(Material.REDSTONE_TORCH_ON, "Fusée lumineuse", "Fusée produisant de la fumée à l'impact",
+				"Permet d'attirer l'attention");
+	}
 	public static ItemStack customSSword(){
 		return getLoredItem(Material.STONE_SWORD, "Massue", "Pour zigouiller du macchabé !");
 	}

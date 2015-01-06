@@ -24,7 +24,7 @@ import com.google.common.base.Predicates;
  */
 public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackableTarget {
 	//Constantes explicites
-	public static final int SNEAK = 6, WALK = 15, SPRINT = 30;
+	public static final int SNEAK = 6, WALK = 15, SPRINT = 25;
 	@SuppressWarnings("unused")
 	private JavaPlugin pl;
 	@SuppressWarnings("rawtypes")
@@ -58,6 +58,8 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 			if(this.d instanceof EntityHuman)
 			{
 				EntityHuman h = (EntityHuman)this.d;
+				if(!this.e.hasLineOfSight(h))
+					return false;
 				/*if(ReviveHandler.isHemoragic((CraftPlayer)h.getBukkitEntity()))
 					return false;*/
 				Location locH = d.getBukkitEntity().getLocation(), locZ = this.e.getBukkitEntity().getLocation();
