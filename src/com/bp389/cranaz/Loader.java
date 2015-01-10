@@ -36,6 +36,9 @@ public final class Loader {
 		  CItems czi = new CItems();
 		  czi.onEnable();
 		  
+		  Effects cze = new Effects();
+		  cze.onEnable();
+		  
 		  Legacy czl = new Legacy();
 		  czl.onEnable();
 		  //loadClass(LAP.class);

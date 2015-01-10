@@ -21,7 +21,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.effects.Bleed;
 import com.bp389.cranaz.effects.Effects;
+import com.bp389.cranaz.effects.WeaponAim;
 import com.bp389.cranaz.items.Items;
+import com.shampaggon.crackshot.events.WeaponShootEvent;
 
 import javax.imageio.ImageIO;
 
@@ -124,6 +126,10 @@ public final class EEffects extends GEvent implements Listener {
 					Bleed.instinct2.apply(p);
 			}*/
 		}
+	}
+	@EventHandler
+	public void weaponAim(WeaponShootEvent e){
+		WeaponAim.handleAim(e.getWeaponTitle(), e.getPlayer());
 	}
 	@EventHandler
 	public void playerAchieved(EntityDamageByEntityEvent e){
