@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.bp389.PluginMethods;
 import com.bp389.cranaz.Loader;
+import com.bp389.cranaz.loots.LootRefactor;
 
 public final class WeaponAim {
 	/**
@@ -35,6 +36,9 @@ public final class WeaponAim {
 						break;
 					}
 					l.setPitch(f0 - scale);
+					l.setYaw(LootRefactor.random.nextInt(2) == 0 ? 
+							p.getLocation().getYaw() - LootRefactor.random.nextInt(6) :
+						p.getLocation().getYaw() + LootRefactor.random.nextInt(6));
 					f0 = l.getPitch();
 					p.teleport(l);
 				}

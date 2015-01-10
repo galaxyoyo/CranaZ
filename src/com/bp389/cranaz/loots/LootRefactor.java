@@ -35,7 +35,7 @@ public final class LootRefactor {
 	private static JavaPlugin plugin;
 	private static World main;
 	public static boolean spawnsOk = false;
-	protected static final Random random = new Random();
+	public static final Random random = new Random();
 	public static volatile Hashtable<Location, ThreadSpawner> loots = new Hashtable<Location, ThreadSpawner>();
 	public static final int PACK = 0, LOOT = 1;
 	public static final String packLoc = "plugins/CranaZ/PacksAndLoots/PackPoints/", lootLoc = "plugins/CranaZ/PacksAndLoots/LootPoints/";
