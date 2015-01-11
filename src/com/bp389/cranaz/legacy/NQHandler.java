@@ -8,40 +8,49 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Classe permettant de gérer l'anti déco-combat
+ * 
  * @author BlackPhantom
- *
+ * 
  */
 public final class NQHandler {
+
 	private static HashMap<Player, Handler> damagins = new HashMap<Player, Handler>();
 	private static JavaPlugin jp;
-	public static void init(JavaPlugin plugin){
-		jp = plugin;
+
+	public static void init(final JavaPlugin plugin) {
+		NQHandler.jp = plugin;
 	}
-	public static void handleNoDeco(Player p){
-		if(damagins.containsKey(p)){
-			damagins.get(p).cancel();
-			damagins.remove(p);
+
+	public static void handleNoDeco(final Player p) {
+		if(NQHandler.damagins.containsKey(p)) {
+			NQHandler.damagins.get(p).cancel();
+			NQHandler.damagins.remove(p);
 		}
-		Handler h = new Handler(p);
-		damagins.put(p, h);
-		h.runTaskLater(jp, 5L * 20L);
+		final Handler h = new Handler(p);
+		NQHandler.damagins.put(p, h);
+		h.runTaskLater(NQHandler.jp, 5L * 20L);
 	}
-	public static boolean isInCombat(Player p){
-		return damagins.containsKey(p);
+
+	public static boolean isInCombat(final Player p) {
+		return NQHandler.damagins.containsKey(p);
 	}
-	public static void forceRemove(Player p){
-		damagins.get(p).cancel();
-		damagins.remove(p);
+
+	public static void forceRemove(final Player p) {
+		NQHandler.damagins.get(p).cancel();
+		NQHandler.damagins.remove(p);
 	}
-	public static class Handler extends BukkitRunnable
-	{
-		private Player p;
-		public Handler(Player p){
+
+	public static class Handler extends BukkitRunnable {
+
+		private final Player p;
+
+		public Handler(final Player p) {
 			this.p = p;
 		}
+
 		@Override
-        public void run() {
-			damagins.remove(p);
-        }
+		public void run() {
+			NQHandler.damagins.remove(this.p);
+		}
 	}
 }

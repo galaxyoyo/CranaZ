@@ -13,46 +13,50 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Représente les cycles de saignement d'un joueur blessé
+ * 
  * @author BlackPhantom
- *
+ * 
  */
-public final class BloodCycle extends BukkitRunnable{
-	private Player p;
+public final class BloodCycle extends BukkitRunnable {
+
+	private final Player p;
 	private int cycle;
-	private Random r = new Random();
+	private final Random r = new Random();
 	public static ArrayList<Player> ps = new ArrayList<Player>();
 	public static Hashtable<Player, BloodCycle> ht = new Hashtable<Player, BloodCycle>();
-	public BloodCycle(Player p){
+
+	public BloodCycle(final Player p) {
 		this.p = p;
 		this.cycle = 0;
-		if(!ps.contains(p)){
-			ps.add(p);
-			ht.put(p, this);
+		if(!BloodCycle.ps.contains(p)) {
+			BloodCycle.ps.add(p);
+			BloodCycle.ht.put(p, this);
 		}
 	}
+
 	@Override
-    public void run() {
-		if(((Damageable)p).getHealth() >= 10D){
-			stop(p);
+	public void run() {
+		if(((Damageable) this.p).getHealth() >= 10D) {
+			BloodCycle.stop(this.p);
 			return;
 		}
 		if(this.r.nextInt(3) == 0)
-			p.sendMessage(Bleed.messages.get(r.nextInt(Bleed.messages.size())));
-		for(PotionEffect pe : Arrays.asList(new PotionEffect(PotionEffectType.SLOW, 5 * 20, 0),
-				new PotionEffect(PotionEffectType.SLOW_DIGGING, 5 * 20, 0),
-				new PotionEffect(PotionEffectType.WEAKNESS, 5 * 20, 0)))
-			pe.apply(p);
-		if(cycle >= 3)
-			p.damage(Integer.valueOf(cycle).doubleValue() - 3D);
-		++cycle;
-    }
-	public static void stop(Player p){
-		ps.remove(p);
-		try{
-			BloodCycle bc = ht.get(p);
-			ht.remove(p);
+			this.p.sendMessage(Bleed.messages.get(this.r.nextInt(Bleed.messages.size())));
+		for(final PotionEffect pe : Arrays.asList(new PotionEffect(PotionEffectType.SLOW, 5 * 20, 0),
+		        new PotionEffect(PotionEffectType.SLOW_DIGGING, 5 * 20, 0), new PotionEffect(PotionEffectType.WEAKNESS, 5 * 20, 0)))
+			pe.apply(this.p);
+		if(this.cycle >= 3)
+			this.p.damage(Integer.valueOf(this.cycle).doubleValue() - 3D);
+		++this.cycle;
+	}
+
+	public static void stop(final Player p) {
+		BloodCycle.ps.remove(p);
+		try {
+			final BloodCycle bc = BloodCycle.ht.get(p);
+			BloodCycle.ht.remove(p);
 			if(bc != null)
 				bc.cancel();
-		}catch(NullPointerException e){}
+		} catch(final NullPointerException e) {}
 	}
 }

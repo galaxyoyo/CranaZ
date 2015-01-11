@@ -5,27 +5,28 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.bp389.PluginMethods;
 
-public final class ThirstRunnable extends BukkitRunnable{
-	private Player p;
-	public ThirstRunnable(Player player){
-		p = player;
+public final class ThirstRunnable extends BukkitRunnable {
+
+	private final Player p;
+
+	public ThirstRunnable(final Player player) {
+		this.p = player;
 	}
+
 	@Override
-    public strictfp void run() {
-		if(!p.isOnline() || p.isOp()){
-			cancel();
+	public strictfp void run() {
+		if(!this.p.isOnline() || this.p.isOp()) {
+			this.cancel();
 			return;
 		}
-		float ef = p.getExp();
+		float ef = this.p.getExp();
 		ef -= ThirstFactor.getPRF();
-		if(ef <= 0F){
-			PluginMethods.alert(p, "Vous etes mort de soif !");
-			p.setHealth(0D);
+		if(ef <= 0F) {
+			PluginMethods.alert(this.p, "Vous etes mort de soif !");
+			this.p.setHealth(0D);
 			return;
-		}
-		else if(ef <= 0.3F){
-			p.sendMessage("La soif commence à se faire sentir");
-		}
-		p.setExp(ef);
-    }
+		} else if(ef <= 0.3F)
+			this.p.sendMessage("La soif commence à se faire sentir");
+		this.p.setExp(ef);
+	}
 }

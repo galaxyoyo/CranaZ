@@ -15,23 +15,25 @@ import com.bp389.cranaz.events.EThirst;
 import com.bp389.cranaz.ia.ZIA;
 
 /**
- * Voir le fichier de licence et la permission d'utilisation accordée
- * à CranaZ et Swiftia Studios et affiliatures directes.
+ * Voir le fichier de licence et la permission d'utilisation accordée à CranaZ
+ * et Swiftia Studios et affiliatures directes.
+ * 
  * @author BlackPhantom
- *
+ * 
  */
-public final class CranaZ extends JavaPlugin
-{
+public final class CranaZ extends JavaPlugin {
+
 	@Override
 	public void onLoad() {
 		Loader.init(this);
-		PluginMethods.minit(getLogger());
+		PluginMethods.minit(this.getLogger());
 		PluginMethods.files();
 		Loader.loadAll(this);
 	}
+
 	@Override
 	public void onEnable() {
-		final PluginManager pm = getServer().getPluginManager();
+		final PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(new EBags(this), this);
 		pm.registerEvents(new EEffects(this), this);
 		pm.registerEvents(new EIA(this), this);
@@ -39,13 +41,15 @@ public final class CranaZ extends JavaPlugin
 		pm.registerEvents(new ELoots(this), this);
 		pm.registerEvents(new EThirst(this), this);
 	}
+
 	@Override
 	public void onDisable() {
-		ZIA zia = new ZIA();
+		final ZIA zia = new ZIA();
 		zia.onDisable();
 	}
+
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 		Loader.parseCommand(sender, command, label, args);
 		return true;
 	}

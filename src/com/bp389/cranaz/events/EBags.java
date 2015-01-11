@@ -17,42 +17,46 @@ import com.bp389.cranaz.bags.IPlayerFactor;
 import com.bp389.cranaz.items.Items;
 
 public final class EBags extends GEvent implements Listener {
-	public EBags(JavaPlugin plugin) {
-	    super(plugin);
-    }
+
+	public EBags(final JavaPlugin plugin) {
+		super(plugin);
+	}
+
 	@Override
-    public Class<? extends Loadable> getRelativePlugin() {
+	public Class<? extends Loadable> getRelativePlugin() {
 		return Bags.class;
-    }
-	
+	}
+
 	/*
 	 * 
 	 */
-	
+
 	@EventHandler
-	public void playerLogin(PlayerLoginEvent e){
+	public void playerLogin(final PlayerLoginEvent e) {
 		IPlayerFactor.loadPlayer(e.getPlayer());
 	}
+
 	@EventHandler
-	public void playerQuit(PlayerQuitEvent e){
+	public void playerQuit(final PlayerQuitEvent e) {
 		IPlayerFactor.unloadPlayer(e.getPlayer());
 	}
+
 	@EventHandler
-	public void playerKick(PlayerKickEvent e){
+	public void playerKick(final PlayerKickEvent e) {
 		IPlayerFactor.unloadPlayer(e.getPlayer());
 	}
+
 	@EventHandler
-	public void inventoryClick(InventoryClickEvent e)
-	{
-		if(e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Items.BAG)
-		{
-			Player p = (Player)e.getWhoClicked();
+	public void inventoryClick(final InventoryClickEvent e) {
+		if(e.getClick() == ClickType.RIGHT && e.getCurrentItem().getType() == Items.BAG) {
+			final Player p = (Player) e.getWhoClicked();
 			p.openInventory(IPlayerFactor.bagOf(p));
 			e.setCancelled(true);
 		}
 	}
+
 	@EventHandler
-	public void playerDie(PlayerDeathEvent e){
+	public void playerDie(final PlayerDeathEvent e) {
 		IPlayerFactor.clearBag(e.getEntity());
 	}
 }

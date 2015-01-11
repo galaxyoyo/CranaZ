@@ -10,32 +10,35 @@ import com.bp389.cranaz.events.GEvent;
 
 /**
  * Représente le menu permettant de choisir un resource pack
+ * 
  * @author BlackPhantom
- *
+ * 
  */
 public final class ResPackMenu {
-	private Inventory i;
+
+	private final Inventory i;
 	public static ItemStack light, heavy;
-	public ResPackMenu(){
-		i = Bukkit.getServer().createInventory(null, 9, "Choisir un resource pack");
+
+	public ResPackMenu() {
+		this.i = Bukkit.getServer().createInventory(null, 9, "Choisir un resource pack");
 		/*
 		 * 
 		 */
-		light = new ItemStack(Material.REDSTONE);
-		ItemMeta im = light.getItemMeta();
+		ResPackMenu.light = new ItemStack(Material.REDSTONE);
+		final ItemMeta im = ResPackMenu.light.getItemMeta();
 		im.setDisplayName("Resource pack léger");
-		light.setItemMeta(im);
+		ResPackMenu.light.setItemMeta(im);
 		/*
 		 * 
 		 */
-		heavy = new ItemStack(Material.DIAMOND);
-		ItemMeta im2 = heavy.getItemMeta();
+		ResPackMenu.heavy = new ItemStack(Material.DIAMOND);
+		final ItemMeta im2 = ResPackMenu.heavy.getItemMeta();
 		im2.setDisplayName("Resource pack ultra.");
-		heavy.setItemMeta(im2);
+		ResPackMenu.heavy.setItemMeta(im2);
 		/*
 		 * 
 		 */
-		i.addItem(light, heavy);
+		this.i.addItem(ResPackMenu.light, ResPackMenu.heavy);
 		GEvent.resGui = this.i;
 	}
 }

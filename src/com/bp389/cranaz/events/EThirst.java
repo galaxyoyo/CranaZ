@@ -19,57 +19,65 @@ import com.bp389.cranaz.thirst.ThirstFactor;
 import com.bp389.cranaz.thirst.ThirstRunnable;
 
 public final class EThirst extends GEvent implements Listener {
-	public EThirst(JavaPlugin jp) {
-	    super(jp);
-    }
+
+	public EThirst(final JavaPlugin jp) {
+		super(jp);
+	}
+
 	@Override
 	public Class<? extends Loadable> getRelativePlugin() {
 		return null;
 	}
-	
+
 	/*
 	 * 
 	 */
-	
+
 	@EventHandler
-	public void playerJoin(PlayerJoinEvent e)
-	{
+	public void playerJoin(final PlayerJoinEvent e) {
 		if(!e.getPlayer().hasPlayedBefore())
 			e.getPlayer().setExp(0.99F);
-		if(!e.getPlayer().hasPermission("cranaz.thirst.no") && !e.getPlayer().isOp()){
-			new ThirstRunnable(e.getPlayer()).runTaskTimer(plugin, 100, ThirstFactor.getDelay() * 20);
-		}
+		if(!e.getPlayer().hasPermission("cranaz.thirst.no") && !e.getPlayer().isOp())
+			new ThirstRunnable(e.getPlayer()).runTaskTimer(this.plugin, 100, ThirstFactor.getDelay() * 20);
 	}
+
 	@EventHandler
-	public void playerDrink(PlayerItemConsumeEvent e)
-	{
-		if(e.getItem().getType() == Material.POTION){
+	public void playerDrink(final PlayerItemConsumeEvent e) {
+		if(e.getItem().getType() == Material.POTION) {
 			PluginMethods.gsay(e.getPlayer(), "Vous avez bu et vous sentez mieux.");
 			e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 0));
 			e.getPlayer().setExp(0.99F);
 		}
 	}
+
 	@EventHandler
-	public void expPicked(PlayerExpChangeEvent e){
+	public void expPicked(final PlayerExpChangeEvent e) {
 		e.setAmount(0);
 	}
-    @EventHandler
-	public void playerDie(PlayerDeathEvent e){
-		new FillExp(e.getEntity()).runTaskAsynchronously(plugin);
+
+	@EventHandler
+	public void playerDie(final PlayerDeathEvent e) {
+		new FillExp(e.getEntity()).runTaskAsynchronously(this.plugin);
 	}
-	class FillExp extends BukkitRunnable
-	{
-		private Player p;
-		public FillExp(Player p){this.p = p;}
-        @Override
+
+	class FillExp extends BukkitRunnable {
+
+		private final Player p;
+
+		public FillExp(final Player p) {
+			this.p = p;
+		}
+
+		@Override
 		public void run() {
-			while(p.isDead());
-			new BukkitRunnable(){
+			while(this.p.isDead());
+			new BukkitRunnable() {
+
 				@Override
 				public void run() {
-					p.setExp(0.99F);
+					FillExp.this.p.setExp(0.99F);
 				}
-			}.runTask(plugin);
+			}.runTask(EThirst.this.plugin);
 		}
 	}
 }

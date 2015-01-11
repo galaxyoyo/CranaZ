@@ -9,53 +9,66 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Classe statique contenant les méthodes relatives au plugin de soif
+ * 
  * @author BlackPhantom
- *
+ * 
  */
 public final class ThirstFactor {
+
 	private static JavaPlugin jp;
 	public static final File config = new File("plugins/CranaZ/Thirst/config.yml");
-	public static void init(JavaPlugin plugin){jp = plugin;}
+
+	public static void init(final JavaPlugin plugin) {
+		ThirstFactor.jp = plugin;
+	}
+
 	/**
 	 * 
 	 * @return Le pourcentage à retirer à chaque cycle, dans la config
 	 */
-	public static int getPercentRet(){
-		FileConfiguration fc = jp.getConfig();
+	public static int getPercentRet() {
+		final FileConfiguration fc = ThirstFactor.jp.getConfig();
 		try {
-	        fc.load(config);
-	        return fc.getInt("thirst.config.pourcentageRetire");
-        } catch (IOException | InvalidConfigurationException e) {return 5;}
+			fc.load(ThirstFactor.config);
+			return fc.getInt("thirst.config.pourcentageRetire");
+		} catch(IOException | InvalidConfigurationException e) {
+			return 5;
+		}
 	}
+
 	/**
 	 * 
 	 * @return La valeur flottante à retirer de la barre d'exp
 	 */
-	public static strictfp float getPRF(){
-		return Float.valueOf(Integer.valueOf(getPercentRet()).floatValue() / 100F).floatValue();
+	public static strictfp float getPRF() {
+		return Float.valueOf(Integer.valueOf(ThirstFactor.getPercentRet()).floatValue() / 100F).floatValue();
 	}
+
 	/**
 	 * 
 	 * @return Le délai entre chaque cycle
 	 */
-	public static int getDelay(){
-		FileConfiguration fc = jp.getConfig();
+	public static int getDelay() {
+		final FileConfiguration fc = ThirstFactor.jp.getConfig();
 		try {
-	        fc.load(config);
-	        return fc.getInt("thirst.config.delaiEnSecondes");
-        } catch (IOException | InvalidConfigurationException e) {return 120;}
+			fc.load(ThirstFactor.config);
+			return fc.getInt("thirst.config.delaiEnSecondes");
+		} catch(IOException | InvalidConfigurationException e) {
+			return 120;
+		}
 	}
+
 	/**
 	 * Enregistre la configuration
 	 */
-	public static void registerDC(){
-		if(!config.exists()){
-			FileConfiguration fc = jp.getConfig();
+	public static void registerDC() {
+		if(!ThirstFactor.config.exists()) {
+			final FileConfiguration fc = ThirstFactor.jp.getConfig();
 			fc.set("thirst.config.delaiEnSecondes", 240);
 			fc.set("thirst.config.pourcentageRetire", 5);
 			try {
-	            fc.save(config);
-            } catch (IOException e) {}
+				fc.save(ThirstFactor.config);
+			} catch(final IOException e) {}
 		}
 	}
 }

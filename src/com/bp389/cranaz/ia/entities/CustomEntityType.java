@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.entity.EntityType;
+
 import net.minecraft.server.v1_8_R1.BiomeBase;
 import net.minecraft.server.v1_8_R1.BiomeMeta;
 import net.minecraft.server.v1_8_R1.EntityCaveSpider;
@@ -17,23 +19,20 @@ import net.minecraft.server.v1_8_R1.EntityTypes;
 import net.minecraft.server.v1_8_R1.EntityWitch;
 import net.minecraft.server.v1_8_R1.EntityZombie;
 
-import org.bukkit.entity.EntityType;
-
 /**
  * Classe permettant d'enregistrer par NMS toutes les entités modifiées
+ * 
  * @author BlackPhantom
- *
+ * 
  */
 public enum CustomEntityType {
 
-	ZOMBIE("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EnhancedZombie.class),
-	SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class, UnspawnableSkeleton.class), 
-	SPIDER("Spider", 52, EntityType.SPIDER, EntitySpider.class, UnspawnableSpider.class),
-	CREEPER("Creeper", 50, EntityType.CREEPER, EntityCreeper.class, UnspawnableCreeper.class), 
-	ENDERMAN("Enderman", 58, EntityType.ENDERMAN, EntityEnderman.class, UnspawnableEnderman.class),
-	WITCH("Witch", 66, EntityType.WITCH, EntityWitch.class, UnspawnableWitch.class),
-	SLIME("Slime", 55, EntityType.SLIME, EntitySlime.class, UnspawnableSlime.class),
-	CAVE_SPIDER("CaveSpider", 59, EntityType.CAVE_SPIDER, EntityCaveSpider.class, UnspawnableCaveSpider.class);
+	ZOMBIE("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EnhancedZombie.class), SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class,
+	        UnspawnableSkeleton.class), SPIDER("Spider", 52, EntityType.SPIDER, EntitySpider.class, UnspawnableSpider.class), CREEPER("Creeper", 50,
+	        EntityType.CREEPER, EntityCreeper.class, UnspawnableCreeper.class), ENDERMAN("Enderman", 58, EntityType.ENDERMAN, EntityEnderman.class,
+	        UnspawnableEnderman.class), WITCH("Witch", 66, EntityType.WITCH, EntityWitch.class, UnspawnableWitch.class), SLIME("Slime", 55, EntityType.SLIME,
+	        EntitySlime.class, UnspawnableSlime.class), CAVE_SPIDER("CaveSpider", 59, EntityType.CAVE_SPIDER, EntityCaveSpider.class,
+	        UnspawnableCaveSpider.class);
 
 	private String name;
 	private int id;
@@ -41,7 +40,8 @@ public enum CustomEntityType {
 	private Class<? extends EntityInsentient> nmsClass;
 	private Class<? extends EntityInsentient> customClass;
 
-	private CustomEntityType(String name, int id, EntityType entityType, Class<? extends EntityInsentient> nmsClass, Class<? extends EntityInsentient> customClass) {
+	private CustomEntityType(final String name, final int id, final EntityType entityType, final Class<? extends EntityInsentient> nmsClass,
+	        final Class<? extends EntityInsentient> customClass) {
 		this.name = name;
 		this.id = id;
 		this.entityType = entityType;
@@ -50,53 +50,67 @@ public enum CustomEntityType {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public int getID() {
-		return id;
+		return this.id;
 	}
 
 	public EntityType getEntityType() {
-		return entityType;
+		return this.entityType;
 	}
 
 	public Class<? extends EntityInsentient> getNMSClass() {
-		return nmsClass;
+		return this.nmsClass;
 	}
 
 	public Class<? extends EntityInsentient> getCustomClass() {
-		return customClass;
+		return this.customClass;
 	}
 
 	/**
 	 * Register our entities.
 	 */
 	public static void registerEntities() {
-		for (CustomEntityType entity : values()) /*Get our entities*/
-			a(entity.getCustomClass(), entity.getName(), entity.getID());
-		/*Get all biomes on the server*/
+		for(final CustomEntityType entity : CustomEntityType.values())
+			/* Get our entities */
+			CustomEntityType.a(entity.getCustomClass(), entity.getName(), entity.getID());
+		/* Get all biomes on the server */
 		BiomeBase[] biomes;
 		try {
-			biomes = (BiomeBase[]) getPrivateStatic(BiomeBase.class, "biomes");
-		} catch (Exception exc) {
+			biomes = (BiomeBase[]) CustomEntityType.getPrivateStatic(BiomeBase.class, "biomes");
+		} catch(final Exception exc) {
 			return;
 		}
-		for (BiomeBase biomeBase : biomes) {
-			if (biomeBase == null)
+		for(final BiomeBase biomeBase : biomes) {
+			if(biomeBase == null)
 				break;
-			for (String field : new String[] { "at", "au", "av", "aw" }) //Lists that hold all entity types
+			for(final String field : new String[] { "at", "au", "av", "aw" })
+				// Lists that hold all entity types
 				try {
-					Field list = BiomeBase.class.getDeclaredField(field);
+					final Field list = BiomeBase.class.getDeclaredField(field);
 					list.setAccessible(true);
 					@SuppressWarnings("unchecked")
-					List<BiomeMeta> mobList = (List<BiomeMeta>) list.get(biomeBase);
+					final List<BiomeMeta> mobList = (List<BiomeMeta>) list.get(biomeBase);
 
-					for (BiomeMeta meta : mobList)
-						for (CustomEntityType entity : values())
-							if (entity.getNMSClass().equals(meta.b)) /*Test if the entity has the custom entity type*/
-								meta.b = entity.getCustomClass(); //Set it's meta to our custom class's meta
-				} catch (Exception e) {
+					for(final BiomeMeta meta : mobList)
+						for(final CustomEntityType entity : CustomEntityType.values())
+							if(entity.getNMSClass().equals(meta.b)) /*
+																	 * Test if
+																	 * the
+																	 * entity
+																	 * has the
+																	 * custom
+																	 * entity
+																	 * type
+																	 */
+								meta.b = entity.getCustomClass(); // Set it's
+								                                  // meta to our
+								                                  // custom
+								                                  // class's
+								                                  // meta
+				} catch(final Exception e) {
 					e.printStackTrace();
 				}
 		}
@@ -107,50 +121,61 @@ public enum CustomEntityType {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void unregisterEntities() {
-		for (CustomEntityType entity : values()) {
+		for(final CustomEntityType entity : CustomEntityType.values()) {
 			// Remove our class references.
 			try {
-				((Map) getPrivateStatic(EntityTypes.class, "d")).remove(entity.getCustomClass());
-			} catch (Exception e) {
+				((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "d")).remove(entity.getCustomClass());
+			} catch(final Exception e) {
 				e.printStackTrace();
 			}
 
 			try {
-				((Map) getPrivateStatic(EntityTypes.class, "f")).remove(entity.getCustomClass());
-			} catch (Exception e) {
+				((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "f")).remove(entity.getCustomClass());
+			} catch(final Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		for (CustomEntityType entity : values())
+		for(final CustomEntityType entity : CustomEntityType.values())
 			try {
-				a(entity.getNMSClass(), entity.getName(), entity.getID());
-			} catch (Exception e) {
+				CustomEntityType.a(entity.getNMSClass(), entity.getName(), entity.getID());
+			} catch(final Exception e) {
 				e.printStackTrace();
 			}
 
 		BiomeBase[] biomes;
 		try {
-			biomes = (BiomeBase[]) getPrivateStatic(BiomeBase.class, "biomes"); /*Get all biomes again*/
-		} catch (Exception exc) {
+			biomes = (BiomeBase[]) CustomEntityType.getPrivateStatic(BiomeBase.class, "biomes"); /*
+																								  * Get
+																								  * all
+																								  * biomes
+																								  * again
+																								  */
+		} catch(final Exception exc) {
 			return;
 		}
-		for (BiomeBase biomeBase : biomes) {
-			if (biomeBase == null)
+		for(final BiomeBase biomeBase : biomes) {
+			if(biomeBase == null)
 				break;
 
-			for (String field : new String[] { "at", "au", "av", "aw" }) /*The entity list*/
+			for(final String field : new String[] { "at", "au", "av", "aw" })
+				/* The entity list */
 				try {
-					Field list = BiomeBase.class.getDeclaredField(field);
+					final Field list = BiomeBase.class.getDeclaredField(field);
 					list.setAccessible(true);
 					@SuppressWarnings("unchecked")
-					List<BiomeMeta> mobList = (List<BiomeMeta>) list.get(biomeBase);
+					final List<BiomeMeta> mobList = (List<BiomeMeta>) list.get(biomeBase);
 
-					for (BiomeMeta meta : mobList)
-						for (CustomEntityType entity : values())
-							if (entity.getCustomClass().equals(meta.b))
-								meta.b = entity.getNMSClass(); /*Set the entities meta back to the NMS one*/
-				} catch (Exception e) {
+					for(final BiomeMeta meta : mobList)
+						for(final CustomEntityType entity : CustomEntityType.values())
+							if(entity.getCustomClass().equals(meta.b))
+								meta.b = entity.getNMSClass(); /*
+															    * Set the
+															    * entities meta
+															    * back to the
+															    * NMS one
+															    */
+				} catch(final Exception e) {
 					e.printStackTrace();
 				}
 		}
@@ -168,9 +193,8 @@ public enum CustomEntityType {
 	 *             if unable to get the object.
 	 */
 	@SuppressWarnings("rawtypes")
-	private static Object getPrivateStatic(Class clazz, String f)
-			throws Exception {
-		Field field = clazz.getDeclaredField(f);
+	private static Object getPrivateStatic(final Class clazz, final String f) throws Exception {
+		final Field field = clazz.getDeclaredField(f);
 		field.setAccessible(true);
 		return field.get(null);
 	}
@@ -180,19 +204,14 @@ public enum CustomEntityType {
 	 * and write to the maps ourself.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void a(Class paramClass, String paramString, int paramInt) {
+	private static void a(final Class paramClass, final String paramString, final int paramInt) {
 		try {
-			((Map) getPrivateStatic(EntityTypes.class, "c")).put(paramString,
-					paramClass);
-			((Map) getPrivateStatic(EntityTypes.class, "d")).put(paramClass,
-					paramString);
-			((Map) getPrivateStatic(EntityTypes.class, "e")).put(
-					Integer.valueOf(paramInt), paramClass);
-			((Map) getPrivateStatic(EntityTypes.class, "f")).put(paramClass,
-					Integer.valueOf(paramInt));
-			((Map) getPrivateStatic(EntityTypes.class, "g")).put(paramString,
-					Integer.valueOf(paramInt));
-		} catch (Exception exc) {
+			((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "c")).put(paramString, paramClass);
+			((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "d")).put(paramClass, paramString);
+			((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "e")).put(Integer.valueOf(paramInt), paramClass);
+			((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "f")).put(paramClass, Integer.valueOf(paramInt));
+			((Map) CustomEntityType.getPrivateStatic(EntityTypes.class, "g")).put(paramString, Integer.valueOf(paramInt));
+		} catch(final Exception exc) {
 			// Unable to register the new class.
 		}
 	}

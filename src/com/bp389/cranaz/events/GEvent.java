@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,9 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bp389.cranaz.Loadable;
 
 public abstract class GEvent {
-	//TODO GLOBAL
+
 	public static final Random rand = new Random();
-	//public static ReviveHandler rh;
+	// public static ReviveHandler rh;
 	protected JavaPlugin plugin;
 	protected static JavaPlugin static_plugin;
 	public static Inventory goGui, resGui;
@@ -26,26 +25,26 @@ public abstract class GEvent {
 	public static ArrayList<String> temps = new ArrayList<String>();
 	public static ArrayList<Inventory> is = new ArrayList<Inventory>();
 	public static HashMap<Player, ItemStack> helmets = new HashMap<Player, ItemStack>();
-	public GEvent(JavaPlugin jp){
-		plugin = jp;
-		static_plugin = jp;
-		FileConfiguration fc = jp.getConfig();
-		File cfg = new File("plugins/CranaZ/Divers/torteela.yml");
+
+	public GEvent(final JavaPlugin jp) {
+		this.plugin = jp;
+		GEvent.static_plugin = jp;
+		final FileConfiguration fc = jp.getConfig();
+		final File cfg = new File("plugins/CranaZ/Divers/torteela.yml");
 		try {
 			boolean b = false;
-			if(!cfg.exists()){
+			if(!cfg.exists()) {
 				cfg.createNewFile();
-				fc.set("torteela.players", (List<String>)Arrays.asList("TST_null"));
+				fc.set("torteela.players", Arrays.asList("TST_null"));
 				fc.save(cfg);
-			}
-			else
+			} else
 				b = true;
-			if(b)
-			{
+			if(b) {
 				fc.load(cfg);
-				temps = (ArrayList<String>)fc.getStringList("torteela.players");
+				GEvent.temps = (ArrayList<String>) fc.getStringList("torteela.players");
 			}
-		} catch (Exception e) {}
+		} catch(final Exception e) {}
 	}
+
 	public abstract Class<? extends Loadable> getRelativePlugin();
 }
