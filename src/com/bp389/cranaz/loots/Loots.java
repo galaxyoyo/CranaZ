@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.bp389.PluginMethods;
 import com.bp389.cranaz.Loadable;
+import com.bp389.cranaz.events.ELoots;
 import com.bp389.cranaz.items.Items;
 
 public final class Loots extends Loadable {
@@ -17,7 +18,7 @@ public final class Loots extends Loadable {
 	public static void startSpawns() {
 		Loots.factor.startSpawns();
 	}
-
+	
 	@SuppressWarnings({ "deprecation", "static-access" })
 	@Override
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
@@ -29,7 +30,7 @@ public final class Loots extends Loadable {
 							final Player player = (Player) sender;
 							if(player.hasPermission("clp.items.get") || player.isOp()) {
 								ItemStack temp = new ItemStack(Material.AIR);
-								switch(args[1]) {
+								switch(args[1].toLowerCase()) {
 									case "eau":
 										temp = Packs.WATER.item();
 										break;
@@ -46,10 +47,10 @@ public final class Loots extends Loadable {
 										temp = Packs.BOOTS.item();
 										break;
 									case "machette":
-										temp = Packs.ISWORD.item();
+										temp = Packs.MACHETTE.item();
 										break;
 									case "hache":
-										temp = Packs.IAXE.item();
+										temp = Packs.AXE.item();
 										break;
 									case "mosin":
 										temp = Packs.MOSIN_AM.item();
@@ -70,7 +71,7 @@ public final class Loots extends Loadable {
 										temp = Packs.PAPER.item();
 										break;
 									case "sang":
-										temp = Packs.GOLDEN_APPLE.item();
+										temp = Packs.BLOOD_BAG.item();
 										break;
 									case "camo":
 										temp = Packs.CAMO.item();
@@ -97,10 +98,13 @@ public final class Loots extends Loadable {
 										temp = Packs.ARTERIAL.item();
 										break;
 									case "massue":
-										temp = Packs.SSWORD.item();
+										temp = Packs.MASS.item();
 										break;
 									case "smith":
 										temp = Items.getAmmoStack(new ItemStack(Material.SLIME_BALL));
+										break;
+									case "antalgiques":
+										temp = Packs.ANTALGIQUES.item();
 										break;
 									default:
 										this.sendMessages(player, "Objets disponibles:", 
@@ -127,7 +131,8 @@ public final class Loots extends Loadable {
 												"blouse", 
 												"neurotoxic", 
 												"arteriel", 
-												"massue");
+												"massue",
+												"antalgiques");
 										return true;
 								}
 								if(temp.getType() != Material.AIR){
@@ -174,7 +179,8 @@ public final class Loots extends Loadable {
 								"blouse", 
 								"neurotoxic", 
 								"arteriel", 
-								"massue");
+								"massue",
+								"antalgiques");
 				} else if(args[0].equalsIgnoreCase("pack")) {
 					if(args.length > 1) {
 						if(sender instanceof Player) {
@@ -207,6 +213,8 @@ public final class Loots extends Loadable {
 								Loots.factor
 								.defineSpawnPoint(Loots.factor.LOOT, player.getTargetBlock(null, 50).getLocation(), Loots.factor.parsePack(args[1]));
 							}
+							else
+								this.showAccessRefused(player);
 					} else
 						this.intoPlayer(sender);
 				} else if(args[0].equalsIgnoreCase("delpack")) {
@@ -223,12 +231,15 @@ public final class Loots extends Loadable {
 						this.intoPlayer(sender);
 				} else if(args[0].equalsIgnoreCase("del")) {
 					if(sender instanceof Player) {
-						if(sender.hasPermission("clp.pack.delete")) {
+						if(sender.hasPermission("clp.pack.delete") || sender.isOp()) {
 							final Player player = (Player) sender;
-							if(Loots.factor.deleteSpawnPoint(Loots.factor.LOOT, player.getTargetBlock(null, 50).getLocation()))
-								PluginMethods.gsay(player, "Point de pack supprimé.");
-							else
-								PluginMethods.warn(player, "Impossible de supprimer le pack.");
+							if(ELoots.editers.contains(player)){
+								PluginMethods.warn(player, "Mode d'édition désactivé.");
+								ELoots.editers.remove(player);
+							} else{
+								PluginMethods.warn(player, "Mode d'édition activé. Clic droit pour supprimer un loot.");
+								ELoots.editers.add(player);
+							}
 						} else
 							this.showAccessRefused((Player) sender);
 					} else

@@ -1,19 +1,21 @@
 package com.bp389.cranaz.bags;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.bp389.cranaz.Util;
 
 public final class IPlayerFactor {
 
 	private static volatile HashMap<Player, Inventory> bags = new HashMap<Player, Inventory>();
-	public static final String bagsLoc = "plugins/CranaZ/CranaZBags/bags/";
+	public static final String bagsLoc = "plugins/CranaZ/database/bags/";
 	protected static JavaPlugin main;
 	public static IBagFactor factor;
 
@@ -31,18 +33,15 @@ public final class IPlayerFactor {
 	}
 
 	public static void clearBag(final Player p) {
-		IPlayerFactor.bags.get(p).clear();
+		if(IPlayerFactor.bags.containsKey(p))
+			IPlayerFactor.bags.get(p).clear();
 	}
 
 	public static void loadPlayer(final Player p) {
 		if(!IPlayerFactor.bags.containsKey(p)) {
 			IPlayerFactor.setB(p, IPlayerFactor.genBag(p));
 			if(!IPlayerFactor.hasABag(p))
-				try {
-					new File(IPlayerFactor.bagsLoc + p.getName() + ".yml").createNewFile();
-				} catch(final IOException e) {
-					e.printStackTrace();
-				}
+				Util.saveToYaml(IPlayerFactor.bagsLoc + p.getName() + ".yml", "bag.contents", new ItemStack[]{});
 		}
 	}
 

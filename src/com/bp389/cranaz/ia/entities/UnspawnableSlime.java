@@ -10,7 +10,7 @@ public class UnspawnableSlime extends EntitySlime {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

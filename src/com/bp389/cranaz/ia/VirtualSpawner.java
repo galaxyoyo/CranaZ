@@ -1,16 +1,16 @@
 package com.bp389.cranaz.ia;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.YamlObj;
 
 /**
  * Représente un spawner virtual faisant appraître des zombies à différentes
@@ -28,6 +28,7 @@ public final class VirtualSpawner {
 	private final Location exactLoc;
 	private int currentCount;
 	private final int secondsToRespawn;
+	private RecSpawn rs;
 	private int count;
 	private boolean isRun = true;
 	private final JavaPlugin jp;
@@ -75,6 +76,9 @@ public final class VirtualSpawner {
 
 	public void countPlus() {
 		++this.currentCount;
+		if(currentCount >= 25 && isRunning()){
+			rs.st_reload();
+		}
 	}
 
 	public Location getExactLocation() {
@@ -82,8 +86,8 @@ public final class VirtualSpawner {
 	}
 
 	protected File getFile() {
-		return new File("plugins/CranaZ/spawners/" + String.valueOf(this.exactLoc.getBlockX()) + "_" + String.valueOf(this.exactLoc.getBlockY()) + "_"
-		        + String.valueOf(this.exactLoc.getBlockZ()) + ".yml");
+		return new File("plugins/CranaZ/database/spawners/" + String.valueOf(this.exactLoc.getBlockX()) + "_" + String.valueOf(this.exactLoc.getBlockY()) + "_"
+				+ String.valueOf(this.exactLoc.getBlockZ()) + ".yml");
 	}
 
 	/**
@@ -95,49 +99,35 @@ public final class VirtualSpawner {
 	 *            Le plugin principal
 	 */
 	public static void startupAll(final World w, final JavaPlugin jpl) {
-		if(new File("plugins/CranaZ/spawners/").listFiles().length == 0)
+		if(new File("plugins/CranaZ/database/spawners/").listFiles().length == 0)
 			return;
-		for(final File f : new File("plugins/CranaZ/spawners/").listFiles()) {
+		for(final File f : new File("plugins/CranaZ/database/spawners/").listFiles()) {
 			final String[] ss = f.getName().split("_", 3);
 			@SuppressWarnings("unused")
-            final VirtualSpawner vs = new VirtualSpawner(new Location(w, Double.valueOf(ss[0]).doubleValue(), Double.valueOf(ss[1]).doubleValue(), Double
-			        .valueOf(ss[2].substring(0, ss[2].indexOf("."))).doubleValue()), jpl);// WTF ? :)
+			final VirtualSpawner vs = new VirtualSpawner(new Location(w, Double.valueOf(ss[0]).doubleValue(), Double.valueOf(ss[1]).doubleValue(), Double
+					.valueOf(ss[2].substring(0, ss[2].indexOf("."))).doubleValue()), jpl);// WTF ? :)
 		}
 	}
 
 	public void saveAll() {
-		final FileConfiguration fc = this.jp.getConfig();
-		fc.set("spawner.count", this.currentCount);
-		fc.set("spawner.locX", this.exactLoc.getX());
-		fc.set("spawner.locY", this.exactLoc.getY());
-		fc.set("spawner.locZ", this.exactLoc.getZ());
-		try {
-			fc.save(this.getFile());
-		} catch(final IOException e) {}
+		Util.saveToYaml(getFile(), new YamlObj("spawner.count", this.currentCount),
+				new YamlObj("spawner.locX", this.exactLoc.getX()),
+				new YamlObj("spawner.locY", this.exactLoc.getY()),
+				new YamlObj("spawner.locZ", this.exactLoc.getZ()));
 	}
 
 	public void go() {
 		setRunning(true);
-		final FileConfiguration fc = this.jp.getConfig();
-		if(!this.getFile().exists())
-			try {
-				this.getFile().createNewFile();
-				fc.set("spawner.count", this.currentCount);
-				fc.set("spawner.locX", this.exactLoc.getX());
-				fc.set("spawner.locY", this.exactLoc.getY());
-				fc.set("spawner.locZ", this.exactLoc.getZ());
-				fc.set("spawner.countdown", -1);
-				fc.save(this.getFile());
-			} catch(final IOException e) {} finally {
-				this.currentCount = 0;
-			}
+		if(!this.getFile().exists()){
+			Util.saveToYaml(getFile(), new YamlObj("spawner.count", this.currentCount),
+					new YamlObj("spawner.locX", this.exactLoc.getX()),
+					new YamlObj("spawner.locY", this.exactLoc.getY()),
+					new YamlObj("spawner.locZ", this.exactLoc.getZ()),
+					new YamlObj("spawner.countdown", -1));
+			this.currentCount = 0;
+		}
 		else
-			try {
-				fc.load(this.getFile());
-				this.currentCount = fc.getInt("spawner.count");
-			} catch(IOException | InvalidConfigurationException e) {
-				this.currentCount = 0;
-			}
+			this.currentCount = (int)Util.getFromYaml(getFile(), "spawner.count", 0);
 		new RecSpawn(this).runTaskTimer(this.jp, 1L, Integer.valueOf(this.secondsToRespawn * 20).longValue());
 	}
 
@@ -171,20 +161,25 @@ public final class VirtualSpawner {
 
 		public RecSpawn(final VirtualSpawner vs) {
 			this.vs = vs;
+			rs = this;
+		}
+
+		public void st_reload(){
+			setRunning(false);
+			new Reload(this.vs).runTaskLater(VirtualSpawner.this.jp, 3600L * 20L);
+			this.cancel();
 		}
 
 		@Override
 		public void run() {
 			++VirtualSpawner.this.count;
 			if(VirtualSpawner.this.count >= 25 || !VirtualSpawner.this.isRun || VirtualSpawner.this.currentCount >= 25) {
-				setRunning(false);
-				new Reload(this.vs).runTaskLater(VirtualSpawner.this.jp, 3600L * 20L);
-				this.cancel();
+				st_reload();
 				return;
 			}
 			// Rayon de spawn aleatoire autour du spawner ~6 blocs x-z
 			final double d0 = Integer.valueOf(VirtualSpawner.this.exactLoc.getBlockX() + VirtualSpawner.this.r.nextInt(6)).doubleValue(), d1 = Integer.valueOf(
-			        VirtualSpawner.this.exactLoc.getBlockZ() + VirtualSpawner.this.r.nextInt(6)).doubleValue();
+					VirtualSpawner.this.exactLoc.getBlockZ() + VirtualSpawner.this.r.nextInt(6)).doubleValue();
 			final Location loc = new Location(VirtualSpawner.this.exactLoc.getWorld(), d0, VirtualSpawner.this.exactLoc.getY(), d1);
 			ZIA.spawnZombie(loc);
 		}

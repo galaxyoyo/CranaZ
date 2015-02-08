@@ -1,4 +1,4 @@
-package com.bp389.cranaz.effects;
+package com.bp389.cranaz;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

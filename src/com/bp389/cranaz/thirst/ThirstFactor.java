@@ -1,11 +1,11 @@
 package com.bp389.cranaz.thirst;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.YamlObj;
 
 /**
  * Classe statique contenant les méthodes relatives au plugin de soif
@@ -15,11 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class ThirstFactor {
 
-	private static JavaPlugin jp;
-	public static final File config = new File("plugins/CranaZ/Thirst/config.yml");
+	public static final File config = new File("plugins/CranaZ/configuration/thirst.yml");
 
 	public static void init(final JavaPlugin plugin) {
-		ThirstFactor.jp = plugin;
 	}
 
 	/**
@@ -27,13 +25,7 @@ public final class ThirstFactor {
 	 * @return Le pourcentage à retirer à chaque cycle, dans la config
 	 */
 	public static int getPercentRet() {
-		final FileConfiguration fc = ThirstFactor.jp.getConfig();
-		try {
-			fc.load(ThirstFactor.config);
-			return fc.getInt("thirst.config.pourcentageRetire");
-		} catch(IOException | InvalidConfigurationException e) {
-			return 5;
-		}
+		return (int)Util.getFromYaml(config, "thirst.config.pourcentageRetire", 5);
 	}
 
 	/**
@@ -46,16 +38,18 @@ public final class ThirstFactor {
 
 	/**
 	 * 
+	 * @return Le délai entre chaque cycle, en long et en ticks
+	 */
+	public static long getLongDelay_ticks(){
+		return Integer.valueOf(getDelay() * 20).longValue();
+	}
+
+	/**
+	 * 
 	 * @return Le délai entre chaque cycle
 	 */
 	public static int getDelay() {
-		final FileConfiguration fc = ThirstFactor.jp.getConfig();
-		try {
-			fc.load(ThirstFactor.config);
-			return fc.getInt("thirst.config.delaiEnSecondes");
-		} catch(IOException | InvalidConfigurationException e) {
-			return 120;
-		}
+		return (int)Util.getFromYaml(config, "thirst.config.delaiEnSecondes", 120);
 	}
 
 	/**
@@ -63,12 +57,8 @@ public final class ThirstFactor {
 	 */
 	public static void registerDC() {
 		if(!ThirstFactor.config.exists()) {
-			final FileConfiguration fc = ThirstFactor.jp.getConfig();
-			fc.set("thirst.config.delaiEnSecondes", 240);
-			fc.set("thirst.config.pourcentageRetire", 5);
-			try {
-				fc.save(ThirstFactor.config);
-			} catch(final IOException e) {}
+			Util.saveToYaml(config, new YamlObj("thirst.config.delaiEnSecondes", 240),
+					new YamlObj("thirst.config.pourcentageRetire", 5));
 		}
 	}
 }

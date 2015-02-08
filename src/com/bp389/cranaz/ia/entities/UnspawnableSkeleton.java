@@ -10,7 +10,7 @@ public class UnspawnableSkeleton extends EntitySkeleton {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

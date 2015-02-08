@@ -1,5 +1,7 @@
 package com.bp389.cranaz.ia.entities;
 
+import java.util.ConcurrentModificationException;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
@@ -16,9 +18,12 @@ import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.ItemStack;
 import net.minecraft.server.v1_8_R1.Items;
 import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_8_R1.PathfinderGoalOpenDoor;
 import net.minecraft.server.v1_8_R1.World;
 
+import com.bp389.cranaz.Util;
 import com.bp389.cranaz.ia.VirtualSpawner;
+import com.bp389.cranaz.ia.ZIA;
 
 /**
  * Classe représentant un zombie modifié
@@ -32,6 +37,7 @@ public class EnhancedZombie extends EntityZombie {
 	private static JavaPlugin plugin;
 	// True si c'est un zombie joueur
 	public boolean ipf = false;
+	private boolean hasMove = false;
 	// Constantes explicites
 	public static final double SPEED = 0.23000000417232513D * 1.6D, FOLLOW_RANGE = 60D, MOVE_SPEED = EnhancedZombie.SPEED * 1.75D, ATTACK_DAMAGE = 3.0D;
 
@@ -47,6 +53,7 @@ public class EnhancedZombie extends EntityZombie {
 	protected void n() {
 		this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true, new Class[] { EntityPigZombie.class }));
 		this.targetSelector.a(2, new EnhancedZombiePathfinderGoal(this, EntityHuman.class, true));
+		this.goalSelector.a(4, new PathfinderGoalOpenDoor(this, true));
 	}
 
 	@Override
@@ -89,8 +96,9 @@ public class EnhancedZombie extends EntityZombie {
 	@Override
 	public boolean bQ() {
 		final VirtualSpawner vs = VirtualSpawner.getNearbySpawner(this.getBukkitLocation(), 80);
+		final Integer i = (Integer)Util.getFromYaml(ZIA.ia_config, "zombies.spawn.facteur_attenuation", Integer.valueOf(12));
 		final int temp = this.random.nextInt(2);
-		if(vs == null && this.random.nextInt(10) == 0) {
+		if(vs == null && this.random.nextInt(i.intValue()) == 0) {
 			switch(temp) {
 				case 0:
 					this.setVillager(true);
@@ -105,11 +113,15 @@ public class EnhancedZombie extends EntityZombie {
 				case 1:
 					this.setVillager(false);
 			}
-			return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
+			return this.world.getDifficulty() != EnumDifficulty.PEACEFUL && this.random.nextInt(4) < 3;
 		}
 		return false;
 	}
-	
+
+	public boolean hasMove(){
+		return this.hasMove;
+	}
+
 
 	/*
 	 * 0 = weapon 1 = Bottes 2 = Pantalon 3 = Plastron 4 = Casque
@@ -152,11 +164,14 @@ public class EnhancedZombie extends EntityZombie {
 	}
 
 	public void move(final Location loc) {
-		this.move(loc, EnhancedZombie.MOVE_SPEED);
+		this.move(loc, EnhancedZombie.MOVE_SPEED, false);
 	}
 
-	public void move(final Location loc, final double speed) {
-		this.getNavigation().a(loc.getX(), loc.getY(), loc.getZ(), speed);
+	public void move(final Location loc, final double speed, final boolean flag) {
+		try{
+			this.getNavigation().a(loc.getX(), loc.getY(), loc.getZ(), speed);
+			this.hasMove = flag;
+		} catch(NullPointerException | ArrayIndexOutOfBoundsException | ConcurrentModificationException e){}
 	}
 
 	@Override

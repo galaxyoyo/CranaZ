@@ -1,7 +1,5 @@
 package com.bp389.cranaz.legacy;
 
-import java.io.File;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,14 +9,6 @@ import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.Loader;
 
 public final class Legacy extends Loadable {
-
-	public static final File wl = new File("plugins/CranaZ/whitelist/");
-
-	@Override
-	public void onEnable() {
-		Legacy.wl.mkdirs();
-		// Utils.init(this);
-	}
 
 	@Override
 	public boolean onCommand(final CommandSender arg0, final Command arg1, final String arg2, final String[] arg3) {

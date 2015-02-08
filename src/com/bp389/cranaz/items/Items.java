@@ -1,7 +1,5 @@
 package com.bp389.cranaz.items;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -20,7 +16,13 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import org.apache.commons.lang.Validate;
+
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.FPS.Arena;
+import com.bp389.cranaz.api.EquipSlot;
+import com.bp389.cranaz.ia.ZIA;
 
 /**
  * Classe contenant divers objets modifiés au consensus de CranaZ, ainsi que de
@@ -33,28 +35,24 @@ public final class Items {
 
 	public static Random random = new Random();
 	public static final Material BAG = Material.QUARTZ;
-	private static JavaPlugin jp;
-
-	public static final void init(final JavaPlugin plugin) {
-		Items.jp = plugin;
-	}
+	public static final int AK47 = 0, BAR = 1, MOSIN = 2, M320 = 3, SMITH = 4;
 
 	public static void recipes() {
 		final ArrayList<ShapedRecipe> shapes = new ArrayList<ShapedRecipe>();
 		final ArrayList<ShapelessRecipe> unshapes = new ArrayList<ShapelessRecipe>();
-		final ShapedRecipe machette = new ShapedRecipe(Items.customISword());
+		final ShapedRecipe machette = new ShapedRecipe(Items.machette());
 		machette.shape(" F ", " F ", " B ");
 		machette.setIngredient('F', Material.IRON_INGOT);
 		machette.setIngredient('B', Material.STICK);
 		shapes.add(machette);
 
-		final ShapedRecipe machette1 = new ShapedRecipe(Items.customISword());
+		final ShapedRecipe machette1 = new ShapedRecipe(Items.machette());
 		machette1.shape("F  ", "F  ", "B  ");
 		machette1.setIngredient('F', Material.IRON_INGOT);
 		machette1.setIngredient('B', Material.STICK);
 		shapes.add(machette1);
 
-		final ShapedRecipe machette2 = new ShapedRecipe(Items.customISword());
+		final ShapedRecipe machette2 = new ShapedRecipe(Items.machette());
 		machette2.shape("  F", "  F", "  B");
 		machette2.setIngredient('F', Material.IRON_INGOT);
 		machette2.setIngredient('B', Material.STICK);
@@ -66,7 +64,7 @@ public final class Items {
 		sac.setIngredient('K', Material.CHEST);
 		shapes.add(sac);
 
-		final ShapelessRecipe amphet = new ShapelessRecipe(Items.customPPie());
+		final ShapelessRecipe amphet = new ShapelessRecipe(Items.amphetamines());
 		amphet.addIngredient(Material.POTION);
 		amphet.addIngredient(Material.SUGAR);
 		amphet.addIngredient(Material.REDSTONE);
@@ -117,13 +115,13 @@ public final class Items {
 		boots2.setIngredient('C', Material.LEATHER);
 		shapes.add(boots2);
 
-		final ShapedRecipe iAxe = new ShapedRecipe(Items.customIAxe());
+		final ShapedRecipe iAxe = new ShapedRecipe(Items.axe());
 		iAxe.shape(" FF", " BF", " B ");
 		iAxe.setIngredient('B', Material.STICK);
 		iAxe.setIngredient('F', Material.IRON_INGOT);
 		shapes.add(iAxe);
 
-		final ShapedRecipe bow = new ShapedRecipe(Items.customBow());
+		final ShapedRecipe bow = new ShapedRecipe(Items.bow());
 		bow.shape("FB ", "F B", "FB ");
 		bow.setIngredient('F', Material.STRING);
 		bow.setIngredient('B', Material.STICK);
@@ -136,7 +134,16 @@ public final class Items {
 		for(int i = 0; i < unshapes.size(); i++)
 			Bukkit.getServer().addRecipe(unshapes.get(i));
 	}
-
+	
+	public static final ItemStack getLoredItem(final ItemStack item, final String name, int amount, final String...lore){
+		final ItemStack is = item;
+		final ItemMeta im = is.getItemMeta();
+		im.setDisplayName(name);
+		im.setLore(Arrays.asList(lore));
+		is.setItemMeta(im);
+		is.setAmount(amount);
+		return is;
+	}
 	/**
 	 * 
 	 * @param item
@@ -147,13 +154,8 @@ public final class Items {
 	 *            Sa description
 	 * @return L'objet modifie
 	 */
-	private static final ItemStack getLoredItem(final ItemStack item, final String name, final String... lore) {
-		final ItemStack is = item;
-		final ItemMeta im = is.getItemMeta();
-		im.setDisplayName(name);
-		im.setLore(Arrays.asList(lore));
-		is.setItemMeta(im);
-		return is;
+	public static final ItemStack getLoredItem(final ItemStack item, final String name, final String... lore) {
+		return getLoredItem(item, name, 1, lore);
 	}
 
 	/**
@@ -162,8 +164,20 @@ public final class Items {
 	 *            Le type
 	 * @see #getLoredItem(ItemStack, String, String...)
 	 */
-	private static final ItemStack getLoredItem(final Material m, final String n, final String... ss) {
-		return Items.getLoredItem(new ItemStack(m), n, ss);
+	public static final ItemStack getLoredItem(final Material m, final String n, final String... ss) {
+		return getLoredItem(m, n, 1, ss);
+	}
+	/**
+	 * 
+	 * @param m Le type
+	 * @param name Le nom
+	 * @param amount Le nombre
+	 * @param lore La description
+	 * @return Un objet modifié
+	 * @see #getLoredItem(ItemStack, String, int, String...)
+	 */
+	public static final ItemStack getLoredItem(final Material m, final String name, int amount, final String... lore){
+		return getLoredItem(new ItemStack(m), name, amount, lore);
 	}
 
 	public static ItemStack hospitalShirt() {
@@ -174,7 +188,12 @@ public final class Items {
 		is.setItemMeta(im);
 		return is;
 	}
-
+	
+	public static ItemStack setAmount(ItemStack from, int i){
+		ItemStack is = from.clone();
+		is.setAmount(i);
+		return is;
+	}
 	public static ItemStack getWrittenBook(final String title, final String dotSplitLore, final String... pages) {
 		final ItemStack is = new ItemStack(Material.WRITTEN_BOOK);
 		final BookMeta bm = (BookMeta) is.getItemMeta();
@@ -184,6 +203,43 @@ public final class Items {
 		is.setItemMeta(bm);
 		return is;
 	}
+	
+	public static ItemStack getAmmoStack(int type, int amount){
+		ItemStack is = getAmmoStack(new ItemStack(Material.GOLD_NUGGET));
+		switch(type){
+			case AK47:
+				is = getAmmoStack(new ItemStack(Material.GOLD_NUGGET));
+				break;
+			case BAR:
+				is = getAmmoStack(new ItemStack(Material.MAGMA_CREAM));
+				break;
+			case MOSIN:
+				is = getAmmoStack(new ItemStack(Material.BLAZE_POWDER));
+				break;
+			case M320:
+				is = getAmmoStack(new ItemStack(Material.FIREBALL));
+				break;
+			case SMITH:
+				is = getAmmoStack(new ItemStack(Material.SLIME_BALL));
+		}
+		is.setAmount(amount);
+		return is;
+	}
+	public static ItemStack getAmmoStack(final ItemStack from) {
+    	if(from.getType() == Material.BLAZE_POWDER)
+    		return Items.getLoredItem(from, "Balles de Mosin Nagant", ChatColor.ITALIC + "Balles pour fusil de sniper type Mosin", ChatColor.ITALIC
+    		        + "Rechargement balle par balle" + ChatColor.RESET);
+    	else if(from.getType() == Material.GOLD_NUGGET)
+    		return Items.getLoredItem(from, "Chargeur(s) d'AK-47", "Chargeurs pour fusil d'assaut type AK-47");
+    	else if(from.getType() == Material.FIREBALL)
+    		return Items.getLoredItem(from, "Grenades de M320H", ChatColor.ITALIC + "Grenades pour lance-grenades type M320H", ChatColor.ITALIC
+    		        + "Une seule grenade par chambre" + ChatColor.RESET);
+    	else if(from.getType() == Material.MAGMA_CREAM)
+    		return Items.getLoredItem(from, "Chargeur(s) de BAR Browning", "Chargeurs pour fusil mitrailleur type BAR");
+    	else if(from.getType() == Material.SLIME_BALL)
+    		return Items.getLoredItem(from, "Balles de Smith", "Balles pour colt type Smith");
+    	return from;
+    }
 
 	public static ItemStack genTShirt(final ItemStack lFrom) {
 		final ItemStack temp = lFrom;
@@ -269,83 +325,107 @@ public final class Items {
 		return Items.getLoredItem(Material.REDSTONE_TORCH_ON, "Fusée lumineuse", "Fusée produisant de la fumée à l'impact", "Permet d'attirer l'attention");
 	}
 
-	public static ItemStack customSSword() {
+	public static ItemStack mass() {
 		return Items.getLoredItem(Material.STONE_SWORD, "Massue", "Pour zigouiller du macchabé !");
 	}
 
 	public static ItemStack bagItemStack() {
 		return Items.getLoredItem(Items.BAG, "Sac a dos", ChatColor.ITALIC + "Permet de porter des objets.", ChatColor.ITALIC
-		        + "Shift + clic droit pour l'ouvrir" + ChatColor.RESET);
+		        + "Clic droit dans l'inventaire pour l'ouvrir" + ChatColor.RESET);
 	}
 
-	public static ItemStack customIAxe() {
+	public static ItemStack axe() {
 		return Items.getLoredItem(Material.IRON_AXE, "Hache", "Bien aiguisee en plus !");
 	}
 
-	public static ItemStack customISword() {
+	public static ItemStack machette() {
 		return Items.getLoredItem(Material.IRON_SWORD, "Machette", "Fais gaffe a ta main !");
 	}
 
-	public static ItemStack customBow() {
+	public static ItemStack bow() {
 		return Items.getLoredItem(Material.BOW, "Arc", "Pour tuer du zombie en toute discretion !");
 	}
 
-	public static ItemStack getAmmoStack(final ItemStack from) {
-		if(from.getType() == Material.BLAZE_POWDER)
-			return Items.getLoredItem(from, "Balles de Mosin Nagant", ChatColor.ITALIC + "Balles pour fusil de sniper type Mosin", ChatColor.ITALIC
-			        + "Rechargement balle par balle" + ChatColor.RESET);
-		else if(from.getType() == Material.GOLD_NUGGET)
-			return Items.getLoredItem(from, "Chargeur(s) d'AK-47", "Chargeurs pour fusil d'assaut type AK-47");
-		else if(from.getType() == Material.FIREBALL)
-			return Items.getLoredItem(from, "Grenades de M320H", ChatColor.ITALIC + "Grenades pour lance-grenades type M320H", ChatColor.ITALIC
-			        + "Une seule grenade par chambre" + ChatColor.RESET);
-		else if(from.getType() == Material.MAGMA_CREAM)
-			return Items.getLoredItem(from, "Chargeur(s) de BAR Browning", "Chargeurs pour fusil mitrailleur type BAR");
-		else if(from.getType() == Material.SLIME_BALL)
-			return Items.getLoredItem(from, "Balles de Smith", "Balles pour colt type Smith");
-		return from;
-	}
-
-	public static ItemStack customPaper() {
+	public static ItemStack bandages() {
 		return Items.getLoredItem(Material.PAPER, "Bandages", "Ca peut servir...");
 	}
 
-	public static ItemStack customGApple() {
+	public static ItemStack big_bloodBag() {
 		return Items.getLoredItem(Material.GOLDEN_APPLE, "Grande poche de sang", "On transfuse ?");
 	}
 
-	public static ItemStack customApple() {
+	public static ItemStack small_bloodBag() {
 		return Items.getLoredItem(Material.APPLE, "Petite poche de sang", "On transfuse ?");
 	}
 
-	public static ItemStack customPPie() {
+	public static ItemStack amphetamines() {
 		return Items.getLoredItem(Material.PUMPKIN_PIE, "Amphétamines", "C'est de la bonne");
 	}
-
-	public static ItemStack customCamo() {
-		return Items.getLoredItem(Material.CHAINMAIL_CHESTPLATE, "Tenue de camouflage - plastron", "Permet d'etre vu de moins loin - 15 %");
+	
+	public static ItemStack antalgiques(){
+		return Items.getLoredItem(Material.FERMENTED_SPIDER_EYE, "Antalgiques", "Pour soigner les bobos");
 	}
 
-	public static ItemStack customCamo_helmet() {
-		return Items.getLoredItem(Material.CHAINMAIL_HELMET, "Tenue de camouflage - casque", "Permet d'etre vu de moins loin - 5 %");
+	public static ItemStack camo_plate() {
+		return Items.getLoredItem(Material.CHAINMAIL_CHESTPLATE, "Tenue de camouflage - plastron", "Permet d'etre vu de moins loin - 20 %");
 	}
 
-	public static ItemStack customCamo_boots() {
-		return Items.getLoredItem(Material.CHAINMAIL_BOOTS, "Tenue de camouflage - bottes", "Permet d'etre vu de moins loin - 20 %");
+	public static ItemStack camo_helmet() {
+		return Items.getLoredItem(Material.CHAINMAIL_HELMET, "Tenue de camouflage - casque", "Permet d'etre vu de moins loin - 10 %");
 	}
 
-	public static ItemStack customCamo_pants() {
-		return Items.getLoredItem(Material.CHAINMAIL_LEGGINGS, "Tenue de camouflage - pantalon", "Permet d'etre vu de moins loin - 20 %");
+	public static ItemStack camo_boots() {
+		return Items.getLoredItem(Material.CHAINMAIL_BOOTS, "Tenue de camouflage - bottes", "Permet d'etre vu de moins loin - 25 %");
 	}
 
-	public static ItemStack customWater() {
+	public static ItemStack camo_pants() {
+		return Items.getLoredItem(Material.CHAINMAIL_LEGGINGS, "Tenue de camouflage - pantalon", "Permet d'etre vu de moins loin - 25 %");
+	}
+
+	public static ItemStack water() {
 		return Items.getLoredItem(Material.POTION, "Bouteille d'eau", "Pour tous les types de soif !");
+	}
+	
+	public static ItemStack teamTShirt(int team, EquipSlot slot) {
+		return getColoredShirt(slot, team == Arena.A ? Color.RED : Color.BLUE);
+	}
+	
+	public static ItemStack getCSUWeapon(String title, int amount){
+		final ItemStack is = ZIA.csu.generateWeapon(title);
+		if(amount == 1)
+			return is;
+		is.setAmount(amount);
+		return is;
+	}
+	public static ItemStack getColoredShirt(EquipSlot slot, Color color){
+		if(slot == EquipSlot.HAND)
+			return null;
+		ItemStack is = null;
+		switch(slot){
+			case BOOTS:
+				is = new ItemStack(Material.LEATHER_BOOTS);
+				break;
+			case PANTS:
+				is = new ItemStack(Material.LEATHER_LEGGINGS);
+				break;
+			case PLATE:
+				is = new ItemStack(Material.LEATHER_CHESTPLATE);
+				break;
+			case HELMET:
+				is = new ItemStack(Material.LEATHER_HELMET);
+		}
+		Validate.notNull(is);
+		LeatherArmorMeta lam = (LeatherArmorMeta)is.getItemMeta();
+		lam.setColor(color);
+		is.setItemMeta(lam);
+		return is;
 	}
 
 	public static class Subs {
 
 		public static enum Drugs {
-			AMPHETAMIN(Items.customPPie());
+			AMPHETAMIN(Items.amphetamines()),
+			ANTALGIQUES(Items.antalgiques());
 
 			private final ItemStack theIS;
 
@@ -364,7 +444,8 @@ public final class Items {
 		}
 
 		public static enum Poison {
-			NEUROTOXIC(Poison.neurotoxic()), ARTERIAL(Poison.arterial());
+			NEUROTOXIC(Poison.neurotoxic()), 
+			ARTERIAL(Poison.arterial());
 
 			private final ItemStack theIS;
 
@@ -445,20 +526,14 @@ public final class Items {
 				this.theBook.setItemMeta(this.theMeta);
 			}
 
-			private static List<String> getSurvive1() {
-				final FileConfiguration fc = Items.jp.getConfig();
-				try {
-					fc.load(new File("plugins/CranaZ/Divers/survie.yml"));
-				} catch(IOException | InvalidConfigurationException e) {}
-				return fc.getStringList("survie");
+			@SuppressWarnings("unchecked")
+            private static List<String> getSurvive1() {
+				return (List<String>)Util.getFromYaml("plugins/CranaZ/divers/survie.yml", "survie");
 			}
 
-			private static List<String> getRules() {
-				final FileConfiguration fc = Items.jp.getConfig();
-				try {
-					fc.load(new File("plugins/CranaZ/Divers/regles.yml"));
-				} catch(IOException | InvalidConfigurationException e) {}
-				return fc.getStringList("regles");
+			@SuppressWarnings("unchecked")
+            private static List<String> getRules() {
+				return (List<String>)Util.getFromYaml("plugins/CranaZ/divers/regles.yml", "regles");
 			}
 
 			public static void giveUtils(final Player p) {

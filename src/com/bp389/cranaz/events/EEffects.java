@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -44,41 +43,40 @@ public final class EEffects extends GEvent implements Listener {
 
 	@EventHandler
 	public void playerBleed(final EntityDamageEvent e) {
-		if(e.getEntityType() == EntityType.PLAYER)
-			// Player p = (Player)e.getEntity();
-			// Damageable d = (Damageable)p;
-			// double d0 = d.getHealth() - e.getDamage();
-			/*
-			 * if(rh.isHemoragic(p)){ e.setCancelled(true); return; }
-			 */
-			if(e.getEntity() instanceof LivingEntity) {
-				boolean b = false;
-				switch(e.getCause()) {
-					case ENTITY_ATTACK:
-						b = true;
-						break;
-					case CONTACT:
-						b = true;
-						break;
-					case FALL:
-						b = true;
-						break;
-					case THORNS:
-						b = true;
-						break;
-					case PROJECTILE:
-						b = true;
-						break;
-					case BLOCK_EXPLOSION:
-						b = true;
-						break;
-					case ENTITY_EXPLOSION:
-						b = true;
-						break;
-				}
-				if(b)
-					Bleed.bleedEffect((LivingEntity) e.getEntity());
+		// Player p = (Player)e.getEntity();
+		// Damageable d = (Damageable)p;
+		// double d0 = d.getHealth() - e.getDamage();
+		/*
+		 * if(rh.isHemoragic(p)){ e.setCancelled(true); return; }
+		 */
+		if(e.getEntity() instanceof LivingEntity) {
+			boolean b = false;
+			switch(e.getCause()) {
+				case ENTITY_ATTACK:
+					b = true;
+					break;
+				case CONTACT:
+					b = true;
+					break;
+				case FALL:
+					b = true;
+					break;
+				case THORNS:
+					b = true;
+					break;
+				case PROJECTILE:
+					b = true;
+					break;
+				case BLOCK_EXPLOSION:
+					b = true;
+					break;
+				case ENTITY_EXPLOSION:
+					b = true;
+					break;
 			}
+			if(b && e.getEntity().getType() != EntityType.ARMOR_STAND)
+				Bleed.bleedEffect((LivingEntity) e.getEntity());
+		}
 		/*
 		 * if(d0 <= 0D){ e.setCancelled(true);
 		 * rh.hemoragize((Player)e.getEntity()); return; } else if(d0 < 9D){
@@ -90,12 +88,6 @@ public final class EEffects extends GEvent implements Listener {
 	@EventHandler
 	public void weaponAim(final WeaponShootEvent e) {
 		WeaponAim.handleAim(e.getWeaponTitle(), e.getPlayer());
-	}
-
-	@EventHandler
-	public void playerAchieved(final EntityDamageByEntityEvent e) {
-		if(e.getEntity() instanceof LivingEntity)
-			Bleed.bleedEffect((LivingEntity) e.getEntity());
 	}
 
 	@EventHandler
@@ -114,9 +106,9 @@ public final class EEffects extends GEvent implements Listener {
 			return;
 		final Player p = (Player) e.getRightClicked();
 		if(e.getPlayer().getItemInHand().getType() == Material.PUMPKIN_PIE || e.getPlayer().getItemInHand().getType() == Material.APPLE
-		        || e.getPlayer().getItemInHand().getType() == Material.GOLDEN_APPLE || e.getPlayer().getItemInHand().getType() == Material.PAPER)
+				|| e.getPlayer().getItemInHand().getType() == Material.GOLDEN_APPLE || e.getPlayer().getItemInHand().getType() == Material.PAPER)
 			if(Items.Subs.Poison.NEUROTOXIC.compareTo(e.getPlayer().getItemInHand())) {
-				Bleed.neurtoxicPoison(p);
+				Bleed.neurotoxicPoison(p);
 				if(e.getPlayer().getItemInHand().getAmount() == 1)
 					e.getPlayer().getInventory().setItemInHand(new ItemStack(Material.AIR, 1));
 				else
@@ -178,9 +170,10 @@ public final class EEffects extends GEvent implements Listener {
 
 	@EventHandler
 	public void playerDrug(final PlayerInteractEvent e) {
-		if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)
+		if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if(e.getPlayer().getItemInHand().getType() == Material.PUMPKIN_PIE || e.getPlayer().getItemInHand().getType() == Material.APPLE
-			        || e.getPlayer().getItemInHand().getType() == Material.GOLDEN_APPLE || e.getPlayer().getItemInHand().getType() == Material.PAPER)
+					|| e.getPlayer().getItemInHand().getType() == Material.GOLDEN_APPLE || e.getPlayer().getItemInHand().getType() == Material.PAPER
+					|| e.getPlayer().getItemInHand().getType() == Material.FERMENTED_SPIDER_EYE){
 				if(Items.Subs.Drugs.AMPHETAMIN.compareTo(e.getPlayer().getItemInHand())) {
 					Bleed.amphet(e.getPlayer());
 					if(e.getPlayer().getItemInHand().getAmount() == 1)
@@ -211,6 +204,14 @@ public final class EEffects extends GEvent implements Listener {
 						e.getPlayer().getInventory().setItemInHand(new ItemStack(Material.AIR, 1));
 					else
 						e.getPlayer().getItemInHand().setAmount(e.getPlayer().getItemInHand().getAmount() - 1);
+				} else if(Items.Subs.Drugs.ANTALGIQUES.compareTo(e.getPlayer().getItemInHand())) {
+					Bleed.antalgiques(e.getPlayer());
+					if(e.getPlayer().getItemInHand().getAmount() == 1)
+						e.getPlayer().getInventory().setItemInHand(new ItemStack(Material.AIR, 1));
+					else
+						e.getPlayer().getItemInHand().setAmount(e.getPlayer().getItemInHand().getAmount() - 1);
 				}
+			}
+		}
 	}
 }

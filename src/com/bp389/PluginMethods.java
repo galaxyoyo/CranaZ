@@ -32,7 +32,14 @@ public final class PluginMethods {
 
 	/* Création des fichiers de config */
 	public static boolean files() {
-		/* return new File("plugins/CranaZ/spawners/").mkdirs(); */return true;
+		final File f = new File("plugins/CranaZ/configuration/"),
+				f1 = new File("plugins/CranaZ/database/spawners"),
+				f2 = new File("plugins/CranaZ/divers/"),
+				f3 = new File("plugins/CranaZ/database/bags/"),
+				f4 = new File("plugins/CranaZ/database/spawns/"),
+				f5 = new File("plugins/CranaZ/database/arenas/");
+				
+		return f.mkdirs() && f1.mkdirs() && f2.mkdirs() && f3.mkdirs() && f4.mkdirs() && f5.mkdirs();
 	}
 
 	/* Destruction des variables, acronyome de methodDestroy */

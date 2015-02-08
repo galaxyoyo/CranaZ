@@ -3,31 +3,32 @@ package com.bp389.cranaz.loots;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_8_R1.DamageSource;
-import net.minecraft.server.v1_8_R1.EntityHuman;
-import net.minecraft.server.v1_8_R1.EntityItem;
+import net.minecraft.server.v1_8_R1.EntityArmorStand;
 
+import com.bp389.cranaz.Util.MathUtil;
 import com.shampaggon.crackshot.CSUtility;
 
 public final class LootRefactor {
@@ -36,16 +37,19 @@ public final class LootRefactor {
 
 	public static final CSUtility csu = new CSUtility();
 	private static JavaPlugin plugin;
-	private static World main;
+	public static World main;
 	public static boolean spawnsOk = false;
 	public static final Random random = new Random();
-	public static volatile Hashtable<Location, ThreadSpawner> loots = new Hashtable<Location, ThreadSpawner>();
+	public static CraftServer mainServer;
+	//public static volatile Hashtable<Location, ThreadSpawner> loots = new Hashtable<Location, ThreadSpawner>();
+	public static volatile HashMap<EntityArmorStand, ThreadSpawner> loots = new HashMap<EntityArmorStand, ThreadSpawner>();
 	public static final int PACK = 0, LOOT = 1;
-	public static final String packLoc = "plugins/CranaZ/PacksAndLoots/PackPoints/", lootLoc = "plugins/CranaZ/PacksAndLoots/LootPoints/";
+	public static final String packLoc = "plugins/CranaZ/database/packs/", lootLoc = "plugins/CranaZ/database/loots/";
 
-	public static void init(final World world, final JavaPlugin jp) {
+	public static void init(final World world, final JavaPlugin jp, final Server serv) {
 		LootRefactor.main = world;
 		LootRefactor.plugin = jp;
+		LootRefactor.mainServer = (CraftServer)serv;
 	}
 
 	/**
@@ -55,20 +59,22 @@ public final class LootRefactor {
 	 * @return Un objet constant représentant le pack
 	 */
 	public EnumPacks parsePack(final String packName) {
-		if(packName.equalsIgnoreCase("chambre"))
-			return EnumPacks.CHAMBRE;
-		else if(packName.equalsIgnoreCase("ferme"))
-			return EnumPacks.FERME;
-		else if(packName.equalsIgnoreCase("cuisine"))
-			return EnumPacks.CUISINE;
-		else if(packName.equalsIgnoreCase("superette"))
-			return EnumPacks.SUPERETTE;
-		else if(packName.equalsIgnoreCase("militaire"))
-			return EnumPacks.MILITAIRE;
-		else if(packName.equalsIgnoreCase("hopital"))
-			return EnumPacks.HOPITAL;
-		else
-			return EnumPacks.NULL;
+		switch(packName.toLowerCase()){
+			case "chambre":
+				return EnumPacks.CHAMBRE;
+			case "ferme":
+				return EnumPacks.FERME;
+			case "cuisine":
+				return EnumPacks.CUISINE;
+			case "superette":
+				return EnumPacks.SUPERETTE;
+			case "militaire":
+				return EnumPacks.MILITAIRE;
+			case "hopital":
+				return EnumPacks.HOPITAL;
+			default:
+				return EnumPacks.NULL;
+		}
 	}
 
 	/**
@@ -78,6 +84,8 @@ public final class LootRefactor {
 	public void startSpawns() {
 		// Un peu compliqué :-)
 		// Il suffit d'analyser avec concentration
+		new File(packLoc).mkdirs();new File(lootLoc).mkdirs();
+		final ArrayList<File> files = new ArrayList<File>();
 		final File[] packs = new File(LootRefactor.packLoc).listFiles(), loots = new File(LootRefactor.lootLoc).listFiles();
 		if(packs.length == 0 && loots.length == 0)
 			return;
@@ -85,8 +93,10 @@ public final class LootRefactor {
 		final ArrayList<double[]> locs = new ArrayList<double[]>(), locs2 = new ArrayList<double[]>();
 		for(final File pack2 : packs)
 			args.add(pack2.getName().split("_"));
-		for(final File loot2 : loots)
+		for(final File loot2 : loots){
 			args2.add(loot2.getName().split("_"));
+			files.add(loot2);
+		}
 		for(int i = 0; i < args.size(); i++) {
 			final double[] tmp = new double[3];
 			tmp[0] = Double.valueOf(args.get(i)[1]).doubleValue();
@@ -102,14 +112,14 @@ public final class LootRefactor {
 			locs2.add(tmp);
 		}
 		for(int i = 0; i < args.size(); i++) {
-			this.startSpawn(this.parsePack(args.get(i)[0]), LootRefactor.PACK, locs.get(i)[0], locs.get(i)[1], locs.get(i)[2]);
+			this.startSpawn(this.parsePack(args.get(i)[0]), LootRefactor.PACK, locs.get(i)[0], locs.get(i)[1], locs.get(i)[2], null);
 			this.spawnPackChest(new Location(LootRefactor.main, locs.get(i)[0], locs.get(i)[1], locs.get(i)[2]), this.parsePack(args.get(i)[0]));
 		}
 		if(loots.length == 0)
 			return;
 		if(args2.size() > 0 && locs2.size() > 0)
 			for(int i = 0; i < args2.size(); i++)
-				this.startSpawn(this.parsePack(args2.get(i)[0]), LootRefactor.LOOT, locs2.get(i)[0], locs2.get(i)[1], locs2.get(i)[2]);
+				this.startSpawn(this.parsePack(args2.get(i)[0]), LootRefactor.LOOT, locs2.get(i)[0], locs2.get(i)[1], locs2.get(i)[2], files.get(i));
 	}
 
 	/*
@@ -131,11 +141,11 @@ public final class LootRefactor {
 	 *            Z
 	 */
 	@SuppressWarnings("static-access")
-	public void startSpawn(final EnumPacks pack, final int packType, final double x, final double y, final double z) {
+	public void startSpawn(final EnumPacks pack, final int packType, final double x, final double y, final double z, final File rll) {
 		if(packType == LootRefactor.PACK || packType == LootRefactor.LOOT) {
-			final ThreadSpawner ts = new ThreadSpawner(pack, packType, new Location(LootRefactor.main, x, y, z));
-			ts.runTaskTimer(this.plugin, 1, pack.delay() * 20);
-			this.loots.put(new Location(LootRefactor.main, x, y, z), ts);
+			final ThreadSpawner ts = new ThreadSpawner(pack, packType, new Location(LootRefactor.main, x, y, z), rll);
+			ts.runTaskTimer(this.plugin, 1L, pack.delay() * 20L);
+			//this.loots.put(new Location(LootRefactor.main, x, y, z), ts);
 		}
 	}
 
@@ -155,11 +165,11 @@ public final class LootRefactor {
 		if(packType == LootRefactor.PACK) {
 			tmp += LootRefactor.packLoc + pack.toString() + "_";
 			tmp += String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_"
-			        + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+					+ String.valueOf(Double.valueOf(loc.getZ()).intValue());
 		} else if(packType == LootRefactor.LOOT) {
 			tmp += LootRefactor.lootLoc + pack.toString() + "_";
 			tmp += String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_"
-			        + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+					+ String.valueOf(Double.valueOf(loc.getZ()).intValue());
 		}
 		return tmp;
 	}
@@ -231,7 +241,7 @@ public final class LootRefactor {
 	 */
 	public boolean isLootBlock(final Location loc, final EnumPacks pack) {
 		final String temp = LootRefactor.lootLoc + pack.toString() + "_" + String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_"
-		        + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+				+ String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
 		return new File(temp).exists();
 	}
 
@@ -282,7 +292,7 @@ public final class LootRefactor {
 	 */
 	public EnumPacks getLootAt(final Location loc) {
 		final String path = LootRefactor.lootLoc, locs = String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_"
-		        + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+				+ String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
 		final File[] fs = new File(path).listFiles();
 		String[] temp = new String[] { "NULL" };
 		for(final File element : fs)
@@ -304,7 +314,7 @@ public final class LootRefactor {
 	public EnumPacks getPackAt(final Location loc, final int packType) {
 		if(packType == LootRefactor.PACK) {
 			final String path = LootRefactor.packLoc, locs = String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_"
-			        + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+					+ String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
 			final File[] fs = new File(path).listFiles();
 			String[] temp = new String[] { "NULL" };
 			for(final File element : fs)
@@ -315,7 +325,7 @@ public final class LootRefactor {
 			return this.parsePack(temp[0]);
 		} else if(packType == LootRefactor.LOOT) {
 			final String path = LootRefactor.lootLoc, locs = String.valueOf(Double.valueOf(loc.getX()).intValue()) + "_"
-			        + String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
+					+ String.valueOf(Double.valueOf(loc.getY()).intValue()) + "_" + String.valueOf(Double.valueOf(loc.getZ()).intValue());
 			final File[] fs = new File(path).listFiles();
 			String[] temp = new String[] { "NULL" };
 			for(final File element : fs)
@@ -344,8 +354,8 @@ public final class LootRefactor {
 	}
 
 	//
-	public void delLoot(final Location loc, final EntityItem i) {
-		i.die();
+	public void delLoot(final Location loc, final ArmorStand i) {
+		((CraftArmorStand)i).getHandle().die();
 	}
 
 	/**
@@ -357,7 +367,6 @@ public final class LootRefactor {
 	 *            La position
 	 * @return True si succès
 	 */
-	@SuppressWarnings("static-access")
 	public boolean deleteSpawnPoint(final int packType, final Location loc) {
 		if(packType == LootRefactor.PACK) {
 			final EnumPacks temp = this.getPackAt(loc, LootRefactor.PACK);
@@ -371,13 +380,32 @@ public final class LootRefactor {
 			if(temp.toString().equalsIgnoreCase("NULL"))
 				return false;
 			final String thePath = this.formPath(packType, loc, temp);
-			this.delLoot(loc, this.loots.get(loc).getItemOf());
+			final HashMap<Integer, ArmorStand> alas = new HashMap<Integer, ArmorStand>();
+			for(Entity e2 : loc.getChunk().getEntities()){
+				if(e2.getType() == EntityType.ARMOR_STAND)
+					alas.put(Double.valueOf(e2.getLocation().distance(loc)).intValue(), (ArmorStand)e2);
+			}
+			if(alas.isEmpty())
+				return false;
+
+			this.delLoot(loc, alas.get(MathUtil.smallest((Integer[])alas.keySet().toArray())));
 			return new File(thePath).delete();
 		}
 		return false;
 	}
 
-	/**
+	public boolean deleteLootPoint(final EntityArmorStand eas){
+		return LootRefactor.loots.get(eas).delete_loot();
+	}
+
+	public LootableArmorStand dropLoot(final Location loc, final ItemStack icon, final ThreadSpawner ts){
+		final LootableArmorStand las = new LootableArmorStand(LootRefactor.mainServer, LootableArmorStand.genLootable(loc), icon);
+		las.spawnThis();
+		LootRefactor.loots.put(las.getHandle(), ts);
+		return las;
+	}
+
+	/*/**
 	 * Lâche un UnpickableItem (objet non ramassable et non stackable) à une
 	 * position
 	 * 
@@ -386,7 +414,7 @@ public final class LootRefactor {
 	 * @param item
 	 *            L'objet <<icône>>
 	 * @return L'objet lâché pour d'éventuelles modifications
-	 */
+	 *\/
 	public EntityItem dropUItem(final Location loc, final ItemStack item) {
 		final EntityItem ei = new EntityItem(((CraftWorld) loc.getWorld()).getHandle(), loc.getX() + 0.5, loc.getY(), loc.getZ() + 0.5,
 		        CraftItemStack.asNMSCopy(item)) {
@@ -396,7 +424,7 @@ public final class LootRefactor {
 
 			@Override
 			public void s_() {}
-			
+
 			@Override
 			public boolean damageEntity(DamageSource damagesource, float f) {
 				return false;
@@ -404,7 +432,7 @@ public final class LootRefactor {
 		};
 		ei.world.addEntity(ei, SpawnReason.CUSTOM);
 		return ei;
-	}
+	}*/
 
 	/**
 	 * 
@@ -419,36 +447,37 @@ public final class LootRefactor {
 		return tmp;
 	}
 
-	/**
+	/*/**
 	 * 
 	 * @param c
 	 *            Le chunk
 	 * @return Une liste contenant les éventuels processus de respawn relatifs
 	 *         aux loots du chunk
-	 */
+	 *\/
 	@SuppressWarnings({ "unchecked", "static-access" })
 	public List<ThreadSpawner> hasLoots(final Chunk c) {
 		final ArrayList<ThreadSpawner> al = new ArrayList<ThreadSpawner>();
-		final Hashtable<Location, ThreadSpawner> loots = (Hashtable<Location, ThreadSpawner>) this.loots.clone();
+		//final Hashtable<Location, ThreadSpawner> loots = (Hashtable<Location, ThreadSpawner>) this.loots.clone();
+		final Hashtable<Entity, ThreadSpawner> loots2 = (Hashtable<Entity, ThreadSpawner>) this.loots.clone();
 		boolean b = false;
-		for(final Entry<Location, ThreadSpawner> e : loots.entrySet())
-			if(c.equals(e.getKey().getChunk()) && e.getValue().getPackType() == LootRefactor.LOOT) {
+		for(final Entry<Entity, ThreadSpawner> e : loots2.entrySet())
+			if(c.equals(e.getKey().getBukkitEntity().getLocation().getChunk()) && e.getValue().getPackType() == LootRefactor.LOOT) {
 				b = true;
 				al.add(e.getValue());
 			}
 		return b ? al : null;
-	}
+	}*/
 
 	//
 	public boolean defineSpawnPoint(final int packType, final Location loc, final EnumPacks pack) {
-		final String tmp = this.formPath(packType, loc, pack);
+		final File tmp = new File(this.formPath(packType, loc, pack));
 		try {
-			new File(tmp).createNewFile();
+			tmp.createNewFile();
 			if(packType == LootRefactor.PACK) {
 				this.spawnPackChest(loc, pack);
-				this.startSpawn(pack, packType, loc.getX(), loc.getY(), loc.getZ());
+				this.startSpawn(pack, packType, loc.getX(), loc.getY(), loc.getZ(), null);
 			} else if(packType == LootRefactor.LOOT)
-				this.startSpawn(pack, packType, loc.getX(), loc.getY(), loc.getZ());
+				this.startSpawn(pack, packType, loc.getX(), loc.getY(), loc.getZ(), tmp);
 
 		} catch(final IOException e) {
 			return false;
@@ -456,19 +485,24 @@ public final class LootRefactor {
 		return true;
 	}
 
-	public EntityItem spawnPackLoot(final Location loc, final ItemStack pack) {
+	public LootableArmorStand spawnPackLoot(final Location loc, final ItemStack pack, final ThreadSpawner ts) {
 		if(pack != null && pack.getType() != Material.AIR)
-			return this.dropUItem(loc, pack);
+			return this.dropLoot(loc, pack, ts);
 		return null;
 	}
 
-	public final ItemStack randomIcon(final Inventory loot) {
-		ItemStack is = new ItemStack(Material.values()[LootRefactor.random.nextInt(Material.values().length)]);
-		for(int i = 0; i < loot.getContents().length; i++)
-			if(loot.getContents()[i] != null && loot.getContents()[i].getType() != Material.AIR) {
-				is = loot.getContents()[i];
+	public final ItemStack randomIcon(final EnumPacks es) {
+		ItemStack is = null;
+		for(Packs p : es.items()){
+			if(LootRefactor.random.nextInt(p.rare()) == 0){
+				is = p.item();
 				break;
 			}
+		}
+		if(is == null)
+			is = es.items().get(LootRefactor.random.nextInt(es.items().size())).item();
+		if(is.getType() == Material.ARROW || is.getType() == Material.BLAZE_POWDER)
+			is.setAmount(LootRefactor.random.nextInt(10) + 1);
 		return is;
 	}
 
@@ -478,36 +512,48 @@ public final class LootRefactor {
 		private final int packType;
 		private final Location loc;
 		private boolean running = true;
-		private Inventory inv = null;
-		private EntityItem i = null;
+		//private EntityItem i = null;
 		private final Chunk c;
+		private LootableArmorStand las = null;
+		private File related_loot = null;
+		private boolean b = true;
 
-		public ThreadSpawner(final EnumPacks pack, final int packType, final Location loc) {
+		public ThreadSpawner(final EnumPacks pack, final int packType, final Location loc, final File related_loot) {
 			this.pack = pack;
 			this.packType = packType;
 			this.loc = loc;
 			this.c = loc.getChunk();
+			this.related_loot = related_loot;
 		}
 
 		@Override
 		public void run() {
 			if(!LootRefactor.this.pointExist(this.packType, this.loc, this.pack) || this.pack == EnumPacks.NULL || !this.running) {
-				if(this.i != null)
-					this.i.die();
-				LootRefactor.loots.remove(this.loc);
+				if(this.las != null)
+					this.las.die();
+				LootRefactor.loots.remove(this.las);
 				this.cancel();
 				return;
 			}
 			if(this.packType == LootRefactor.LOOT) {
-				if(this.i != null)
-					this.i.die();
-				this.inv = LootRefactor.this.randomInvLoot(this.pack);
-				this.i = LootRefactor.this.spawnPackLoot(this.loc, LootRefactor.this.randomIcon(this.inv));
+				if(this.las != null)
+					this.las.die();
+				LootRefactor.loots.remove(this.las);
+				this.las = LootRefactor.this.spawnPackLoot(this.loc, LootRefactor.this.randomIcon(this.pack), this);
+				if(b){
+					for(Entity e2 : las.getNearbyEntities(1, 5, 1)){
+						if(e2.getType() == EntityType.ARMOR_STAND){
+							if(MathUtil.locationEquals(las.getLocation(), e2.getLocation(), 0.1D))
+								((CraftEntity)e2).getHandle().die();
+						}
+					}
+					b = false;
+				}
 			}
 			if(!LootRefactor.this.pointExist(this.packType, this.loc, this.pack) || this.pack == EnumPacks.NULL || !this.running) {
-				if(this.i != null)
-					this.i.die();
-				LootRefactor.loots.remove(this.loc);
+				if(this.las != null)
+					this.las.die();
+				LootRefactor.loots.remove(this.las);
 				this.cancel();
 				return;
 			}
@@ -515,20 +561,22 @@ public final class LootRefactor {
 				LootRefactor.this.spawnPackChest(this.loc, this.pack);
 		}
 
-		public EntityItem getItemOf() {
-			return this.i;
-		}
-
-		public Inventory getInventoryOf() {
-			return this.inv;
+		public LootableArmorStand getStand() {
+			return this.las;
 		}
 
 		public Location getLocationOf() {
-			return this.loc;
+			return this.las.getLocation();
 		}
 
 		public EnumPacks getPackOf() {
 			return this.pack;
+		}
+
+		public boolean delete_loot(){
+			final boolean b = this.related_loot.delete();
+			this.run();
+			return b;
 		}
 
 		public int getPackType() {
@@ -536,9 +584,10 @@ public final class LootRefactor {
 		}
 
 		public void respawnItem() {
-			if(this.i != null)
-				this.i.die();
-			this.i = LootRefactor.this.dropUItem(this.loc, this.pack.items().get(LootRefactor.random.nextInt(this.pack.items().size())).item());
+			if(this.las != null)
+				this.las.die();
+			LootRefactor.loots.remove(this.las);
+			this.las = LootRefactor.this.dropLoot(this.loc, this.pack.items().get(LootRefactor.random.nextInt(this.pack.items().size())).item(), this);
 		}
 
 		public Chunk getChunkOf() {

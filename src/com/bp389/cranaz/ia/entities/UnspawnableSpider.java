@@ -10,7 +10,7 @@ public class UnspawnableSpider extends EntitySpider {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

@@ -1,19 +1,15 @@
 package com.bp389.cranaz.ia;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -22,12 +18,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.minecraft.server.v1_8_R1.Packet;
-
 import com.bp389.PluginMethods;
 import com.bp389.cranaz.Loadable;
 import com.bp389.cranaz.Loader;
-import com.bp389.cranaz.MathUtil;
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.YamlObj;
 import com.bp389.cranaz.events.GEvent;
 import com.bp389.cranaz.ia.entities.CustomEntityType;
 import com.bp389.cranaz.ia.entities.EnhancedZombie;
@@ -38,19 +33,23 @@ public class ZIA extends Loadable {
 
 	public static HashMap<Player, Player> ps = new HashMap<Player, Player>();
 	public static final CSUtility csu = new CSUtility();
+	public static final File ia_config = new File("plugins/CranaZ/configuration/IA.yml");
 
 	@Override
 	public void onEnable() {
 		PluginMethods.info("CranaZombieIA enregistre les entités...");
-		new File("plugins/CranaZ/spawners/").mkdirs();
-		new File("plugins/CranaZ/Divers/spawns/").mkdirs();
-		if(!new File("plugins/CranaZ/res_packs.yml").exists()) {
-			this.getConfig().set("resources.packs.light", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Light.zip");
-			this.getConfig().set("resources.packs.heavy", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Ultra.zip");
-			try {
-				new File("plugins/CranaZ/res_packs.yml").createNewFile();
-				this.getConfig().save(new File("plugins/CranaZ/res_packs.yml"));
-			} catch(final IOException e) {}
+		final File f = new File("plugins/CranaZ/configuration/res_packs.yml");
+		if(!f.exists()) {
+			Util.saveToYaml(f, new YamlObj("resources.packs.light", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Light.zip"),
+					new YamlObj("resources.packs.heavy", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Ultra.zip"));
+		}
+		if(!ia_config.exists()){
+			Util.saveToYaml(ia_config, new YamlObj("zombies.detection.vision_necessaire", true),
+					new YamlObj("zombies.detection.sneak", 6),
+					new YamlObj("zombies.detection.marche", 15),
+					new YamlObj("zombies.detection.sprint", 25),
+					new YamlObj("zombies.spawn.mort_joueur", true),
+					new YamlObj("zombies.spawn.facteur_attenuation", 12));
 		}
 
 		CustomEntityType.registerEntities();
@@ -81,10 +80,10 @@ public class ZIA extends Loadable {
 							pt.teleport(ZIA.ps.get(pt), TeleportCause.PLUGIN);
 							GEvent.playings.add(pt);
 							pt.getInventory().clear();
-							final ItemStack is = Items.customSSword();
+							final ItemStack is = Items.mass();
 							is.setDurability(Integer.valueOf(85).shortValue());
-							pt.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is,
-							/* csu.generateWeapon("Smith"), */Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
+							pt.getInventory().addItem(Items.water(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is,
+									csu.generateWeapon("Smith"), Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
 							ZIA.ps.remove(pt);
 						} else
 							pt.sendMessage("§r§cVous n'avez pas de requête.");
@@ -110,7 +109,7 @@ public class ZIA extends Loadable {
 						return true;
 					}
 					sender.sendMessage((String[]) Arrays.asList("Position: " + vs.getExactLocation().toString(), "Compteur: " + vs.getCountString() + " / 25",
-					        "Actif: " + (vs.isRunning() ? "oui" : "non")).toArray());
+							"Actif: " + (vs.isRunning() ? "oui" : "non")).toArray());
 				} else if(args[0].equalsIgnoreCase("zombie")) {
 					if(sender.hasPermission("cranaz.spawn_zombie") || sender.isOp()) {
 						if(sender instanceof Player) {
@@ -197,76 +196,13 @@ public class ZIA extends Loadable {
 		return customEntity;
 	}
 
-	public static class Utils {
-
-		public static final int LIGHT = 0, HEAVY = 1;
-		private static JavaPlugin jp;
-
-		public static void ini(final JavaPlugin jp) {
-			Utils.jp = jp;
-		}
-
-		/**
-		 * 
-		 * @return Le nombre de cases d'inventaires (x9) nécessaire pour
-		 *         contenir une case par joueur
-		 */
-		@SuppressWarnings("deprecation")
-		public static int iSize() {
-			final double x = Integer.valueOf(Bukkit.getServer().getOnlinePlayers().length).doubleValue(), y = 9D;
-			return Double.valueOf(MathUtil.math_supMultiplier(x, y)).intValue();
-		}
-
-		/*
-		 * 
-		 */
-		public static void noSPK_tp(final Player p) {
-			final Location l = ZIA.RandomSpawns.randomLoc();
-			l.setY(l.getY() + 1D);
-			p.teleport(l);
-			p.getInventory().clear();
-			final ItemStack is = Items.customSSword();
-			is.setDurability(Integer.valueOf(85).shortValue());
-			p.getInventory().addItem(Items.customWater(), Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), is,
-			/* csu.generateWeapon("Smith"), */Items.getAmmoStack(new ItemStack(Material.SLIME_BALL, 3)));
-		}
-
-		public static void sendPacket(final Player p, final Packet packet) {
-			((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
-		}
-
-		@SuppressWarnings("deprecation")
-		public static void sendPacketPos(final Location l, final int radius, final Packet p, final Player excluded) {
-			for(final Player pl : Bukkit.getServer().getOnlinePlayers()) {
-				if(excluded != null && pl.equals(excluded))
-					continue;
-				final int dist = Double.valueOf(l.distance(pl.getLocation())).intValue();
-				if(dist <= radius)
-					Utils.sendPacket(pl, p);
-			}
-		}
-
-		public static String getPackLink(final int type) {
-			final FileConfiguration fc = Utils.jp.getConfig();
-			String s = "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Light.zip";
-			try {
-				fc.load(new File("plugins/CranaZ/res_packs.yml"));
-				s = type == Utils.LIGHT ? fc.getString("resources.packs.light", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Light.zip") : fc
-				        .getString("resources.packs.heavy", "https://dl.dropboxusercontent.com/u/79959333/Dev/CranaZ/Ultra.zip");
-			} catch(IOException | InvalidConfigurationException e) {}
-			return s;
-		}
-	}
-
 	public static class RandomSpawns {
 
 		private static ArrayList<Location> locs;
-		private static JavaPlugin jp;
 		private static org.bukkit.World w;
 		public static boolean init = false;
 
 		public static void init(final JavaPlugin plugin, final org.bukkit.World world) {
-			RandomSpawns.jp = plugin;
 			RandomSpawns.w = world;
 			try {
 				RandomSpawns.locs = RandomSpawns.getSpawnPoints();
@@ -274,20 +210,14 @@ public class ZIA extends Loadable {
 		}
 
 		public static void setSpawnLoc(final Location l) {
-			final int i = new File("plugins/CranaZ/Divers/spawns/").listFiles().length;
+			final int i = new File("plugins/CranaZ/database/spawns/").listFiles().length;
 			String s;
 			if(i == 0)
 				s = "spawn0";
 			else
 				s = "spawn" + String.valueOf(i + 1);
-			try {
-				new File("plugins/CranaZ/Divers/spawns/" + s + ".yml").createNewFile();
-				final FileConfiguration fc = RandomSpawns.jp.getConfig();
-				fc.set("coords.locX", l.getX());
-				fc.set("coords.locY", l.getY());
-				fc.set("coords.locZ", l.getZ());
-				fc.save(new File("plugins/CranaZ/Divers/spawns/" + s + ".yml"));
-			} catch(final IOException e) {}
+			Util.saveToYaml("plugins/CranaZ/database/spawns/" + s + ".yml", new YamlObj("coords.locX", l.getX()),
+					new YamlObj("coords.locY", l.getY()), new YamlObj("coords.locZ", l.getZ()));
 		}
 
 		public static Location randomLoc() {
@@ -297,15 +227,12 @@ public class ZIA extends Loadable {
 		}
 
 		public static ArrayList<Location> getSpawnPoints() throws Exception {
-			final FileConfiguration temp = RandomSpawns.jp.getConfig();
-			final File f = new File("plugins/CranaZ/Divers/spawns/");
+			final File f = new File("plugins/CranaZ/database/spawns/");
 			if(f.listFiles().length <= 0)
 				return null;
 			final ArrayList<Location> all = new ArrayList<Location>();
-			for(final File f1 : f.listFiles()) {
-				temp.load(f1);
-				all.add(new Location(RandomSpawns.w, temp.getDouble("coords.locX"), temp.getDouble("coords.locY"), temp.getDouble("coords.locZ")));
-			}
+			for(final File f1 : f.listFiles())
+				all.add(new Location(RandomSpawns.w, (double)Util.getFromYaml(f1, "coords.locX"), (double)Util.getFromYaml(f1, "coords.locY"), (double)Util.getFromYaml(f1, "coords.locZ")));
 			return all;
 		}
 	}

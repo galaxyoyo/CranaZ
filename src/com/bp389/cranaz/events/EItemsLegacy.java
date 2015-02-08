@@ -131,7 +131,7 @@ public final class EItemsLegacy extends GEvent implements Listener {
 	}
 
 	@EventHandler
-	public void itemRemoved(final EntityDamageByEntityEvent e) {
+	public void itemRemovedOrNoDeco(final EntityDamageByEntityEvent e) {
 		if(e.getDamager().getType() == EntityType.PLAYER) {
 			final Player p = (Player) e.getDamager();
 			if(p.isOp())
@@ -166,6 +166,7 @@ public final class EItemsLegacy extends GEvent implements Listener {
 	@EventHandler
 	public void playerDie(final PlayerDeathEvent e) {
 		final String s = e.getEntity().getDisplayName();
+		NQHandler.forceRemove(e.getEntity());
 		if(e.getEntity().getLastDamageCause() == null || e.getEntity().getLastDamageCause().getCause() == null)
 			return;
 		switch(e.getEntity().getLastDamageCause().getCause()) {

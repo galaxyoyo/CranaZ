@@ -1,6 +1,6 @@
 name: CranaZ
 main: com.bp389.cranaz.CranaZ
-version: 1.911b
+version: 2.315b
 authors:
 - BlackPhantom
 - Arnialo
@@ -18,13 +18,21 @@ commands:
   clp:
     description: Commande basique de CranaZ loot and packs
     usage: /<command> [Commandes] [Arguments...]
-    permission: clp.basic
+    permission: cranaz.loots.basic
     permission-message: Acces refuse
   cranaz:
     description: Commande basique de CranaZ Zombie IA
     usage: /<command> [...]
     permission: cranaz.basic
     permission-message: Acces refuse
+  fps:
+    description: Commande relative au module FPS.
+    usage: /<command> [Commandes] [Arguments...]
+    permissions: cranaz.fps.basic
+    permission-message: Acces refuse
+  exit:
+    description: Permet de quitter une arene
+    usage: /<command>
 permissions:
   cranaz.bags.basic:
     description: Commande basique des sacs.
@@ -60,4 +68,7 @@ permissions:
       clp.pack.delete: true
   cranaz.basic:
     description: Permission basique de CranaZ
+    default: true
+  cranaz.fps.basic:
+    description: Permission de base du module FPS de CranaZ
     default: true

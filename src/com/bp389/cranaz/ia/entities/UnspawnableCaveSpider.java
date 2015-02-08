@@ -10,7 +10,7 @@ public class UnspawnableCaveSpider extends EntityCaveSpider {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

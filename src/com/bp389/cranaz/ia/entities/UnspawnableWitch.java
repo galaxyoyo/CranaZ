@@ -10,7 +10,7 @@ public class UnspawnableWitch extends EntityWitch {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

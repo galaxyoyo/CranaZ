@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.bp389.cranaz.FPS.FPS;
 import com.bp389.cranaz.bags.Bags;
 import com.bp389.cranaz.bags.IPlayerFactor;
 import com.bp389.cranaz.effects.Bleed;
@@ -11,7 +12,6 @@ import com.bp389.cranaz.effects.Effects;
 import com.bp389.cranaz.ia.ZIA;
 import com.bp389.cranaz.ia.entities.EnhancedZombie;
 import com.bp389.cranaz.items.CItems;
-import com.bp389.cranaz.items.Items;
 import com.bp389.cranaz.legacy.Legacy;
 import com.bp389.cranaz.legacy.NQHandler;
 import com.bp389.cranaz.loots.Loots;
@@ -27,7 +27,7 @@ import com.bp389.cranaz.thirst.ThirstFactor;
 public final class Loader {
 
 	public static JavaPlugin plugin;
-	private static final int PLUGIN_COUNT = 6;
+	private static final int PLUGIN_COUNT = 7;
 
 	public static final void init(final JavaPlugin jp) {
 		Loader.plugin = jp;
@@ -48,16 +48,17 @@ public final class Loader {
 		// loadClass(LAP.class);
 		final ZIA zia = new ZIA();
 		zia.onEnable();
+		
+		final FPS fps = new FPS();
+		fps.onEnable();
 	}
 
 	public static final void initAll(final JavaPlugin jp) {
 		IPlayerFactor.init(jp);
 		Bleed.init(jp);
-		Items.init(jp);
 		NQHandler.init(jp);
 		ThirstFactor.init(jp);
 		EnhancedZombie.initPlugin(jp);
-		ZIA.Utils.ini(jp);
 	}
 
 	public static final void parseCommand(final CommandSender cs, final Command c, final String lbl, final String[] args) {
@@ -87,6 +88,9 @@ public final class Loader {
 					final ZIA zia = new ZIA();
 					zia.onCommand(cs, c, lbl, args);
 					break;
+				case 6:
+					final FPS fps = new FPS();
+					fps.onCommand(cs, c, lbl, args);
 			}
 	}
 }

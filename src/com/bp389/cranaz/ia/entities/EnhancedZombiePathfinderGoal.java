@@ -14,6 +14,8 @@ import net.minecraft.server.v1_8_R1.IEntitySelector;
 import net.minecraft.server.v1_8_R1.Items;
 import net.minecraft.server.v1_8_R1.PathfinderGoalNearestAttackableTarget;
 
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.ia.ZIA;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -25,10 +27,10 @@ import com.google.common.base.Predicates;
  */
 public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackableTarget {
 
-	// Constantes explicites
-	public static final int SNEAK = 6, WALK = 15, SPRINT = 25;
 	@SuppressWarnings("unused")
 	private JavaPlugin pl;
+	private static boolean init = false, vision;
+	private static int SNEAK, WALK, SPRINT;
 
 	@SuppressWarnings("rawtypes")
 	public EnhancedZombiePathfinderGoal(final EntityCreature entitycreature, final Class oclass, final boolean flag) {
@@ -44,6 +46,20 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 	public EnhancedZombiePathfinderGoal(final EntityCreature entitycreature, final Class oclass, final int i, final boolean flag, final boolean flag1,
 	        final Predicate predicate) {
 		super(entitycreature, oclass, i, flag, flag1, predicate);
+		if(!init){
+			init = true;
+			try{
+				SNEAK = (int)Util.getFromYaml(ZIA.ia_config, "zombies.detection.sneak", 6);
+				WALK = (int)Util.getFromYaml(ZIA.ia_config, "zombies.detection.marche", 15);
+				SPRINT = (int)Util.getFromYaml(ZIA.ia_config, "zombies.detection.sprint", 25);
+				vision = (boolean)Util.getFromYaml(ZIA.ia_config, "zombies.detection.vision_necessaire", true);
+			}catch(ClassCastException e){
+				SNEAK = 6;
+				WALK = 15;
+				SPRINT = 25;
+				vision = true;
+			}
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -58,7 +74,7 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 			this.d = (EntityLiving) list.get(0);
 			if(this.d instanceof EntityHuman) {
 				final EntityHuman h = (EntityHuman) this.d;
-				if(!this.e.hasLineOfSight(h))
+				if(!this.e.hasLineOfSight(h) && vision)
 					return false;
 				/*
 				 * if(ReviveHandler.isHemoragic((CraftPlayer)h.getBukkitEntity())
@@ -72,22 +88,22 @@ public class EnhancedZombiePathfinderGoal extends PathfinderGoalNearestAttackabl
 						camoVal += 15;
 				if(this.d.getEquipment(1) != null)
 					if(this.d.getEquipment(1).getItem() == Items.CHAINMAIL_BOOTS)
-						camoVal += 20;
+						camoVal += 25;
 				if(this.d.getEquipment(2) != null)
 					if(this.d.getEquipment(2).getItem() == Items.CHAINMAIL_LEGGINGS)
-						camoVal += 20;
+						camoVal += 25;
 				if(this.d.getEquipment(4) != null)
 					if(this.d.getEquipment(4).getItem() == Items.CHAINMAIL_HELMET)
-						camoVal += 5;
+						camoVal += 10;
 				if(camoVal != 0) {
 					final int i = distance / 100 * camoVal;
 					distance += i;
 				}
-				if(distance <= EnhancedZombiePathfinderGoal.SNEAK)
+				if(distance <= SNEAK)
 					this.target();
-				else if(!h.isSneaking() && distance <= EnhancedZombiePathfinderGoal.WALK)
+				else if(!h.isSneaking() && distance <= WALK)
 					this.target();
-				else if(h.isSprinting() && distance <= EnhancedZombiePathfinderGoal.SPRINT)
+				else if(h.isSprinting() && distance <= SPRINT)
 					this.target();
 			}
 		}

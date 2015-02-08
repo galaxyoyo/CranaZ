@@ -38,7 +38,7 @@ public final class EThirst extends GEvent implements Listener {
 		if(!e.getPlayer().hasPlayedBefore())
 			e.getPlayer().setExp(0.99F);
 		if(!e.getPlayer().hasPermission("cranaz.thirst.no") && !e.getPlayer().isOp())
-			new ThirstRunnable(e.getPlayer()).runTaskTimer(this.plugin, 100, ThirstFactor.getDelay() * 20);
+			new ThirstRunnable(e.getPlayer()).runTaskTimer(this.plugin, ThirstFactor.getLongDelay_ticks(), ThirstFactor.getLongDelay_ticks());
 	}
 
 	@EventHandler

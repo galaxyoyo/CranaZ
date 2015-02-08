@@ -27,12 +27,14 @@ import net.minecraft.server.v1_8_R1.EntityZombie;
  */
 public enum CustomEntityType {
 
-	ZOMBIE("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EnhancedZombie.class), SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class,
-	        UnspawnableSkeleton.class), SPIDER("Spider", 52, EntityType.SPIDER, EntitySpider.class, UnspawnableSpider.class), CREEPER("Creeper", 50,
-	        EntityType.CREEPER, EntityCreeper.class, UnspawnableCreeper.class), ENDERMAN("Enderman", 58, EntityType.ENDERMAN, EntityEnderman.class,
-	        UnspawnableEnderman.class), WITCH("Witch", 66, EntityType.WITCH, EntityWitch.class, UnspawnableWitch.class), SLIME("Slime", 55, EntityType.SLIME,
-	        EntitySlime.class, UnspawnableSlime.class), CAVE_SPIDER("CaveSpider", 59, EntityType.CAVE_SPIDER, EntityCaveSpider.class,
-	        UnspawnableCaveSpider.class);
+	ZOMBIE("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EnhancedZombie.class), 
+	SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class, UnspawnableSkeleton.class), 
+	SPIDER("Spider", 52, EntityType.SPIDER, EntitySpider.class, UnspawnableSpider.class), 
+	CREEPER("Creeper", 50, EntityType.CREEPER, EntityCreeper.class, UnspawnableCreeper.class), 
+	ENDERMAN("Enderman", 58, EntityType.ENDERMAN, EntityEnderman.class, UnspawnableEnderman.class), 
+	WITCH("Witch", 66, EntityType.WITCH, EntityWitch.class, UnspawnableWitch.class), 
+	SLIME("Slime", 55, EntityType.SLIME, EntitySlime.class, UnspawnableSlime.class), 
+	CAVE_SPIDER("CaveSpider", 59, EntityType.CAVE_SPIDER, EntityCaveSpider.class, UnspawnableCaveSpider.class);
 
 	private String name;
 	private int id;
@@ -41,7 +43,7 @@ public enum CustomEntityType {
 	private Class<? extends EntityInsentient> customClass;
 
 	private CustomEntityType(final String name, final int id, final EntityType entityType, final Class<? extends EntityInsentient> nmsClass,
-	        final Class<? extends EntityInsentient> customClass) {
+			final Class<? extends EntityInsentient> customClass) {
 		this.name = name;
 		this.id = id;
 		this.entityType = entityType;
@@ -97,19 +99,19 @@ public enum CustomEntityType {
 					for(final BiomeMeta meta : mobList)
 						for(final CustomEntityType entity : CustomEntityType.values())
 							if(entity.getNMSClass().equals(meta.b)) /*
-																	 * Test if
-																	 * the
-																	 * entity
-																	 * has the
-																	 * custom
-																	 * entity
-																	 * type
-																	 */
+							 * Test if
+							 * the
+							 * entity
+							 * has the
+							 * custom
+							 * entity
+							 * type
+							 */
 								meta.b = entity.getCustomClass(); // Set it's
-								                                  // meta to our
-								                                  // custom
-								                                  // class's
-								                                  // meta
+					// meta to our
+					// custom
+					// class's
+					// meta
 				} catch(final Exception e) {
 					e.printStackTrace();
 				}
@@ -146,11 +148,11 @@ public enum CustomEntityType {
 		BiomeBase[] biomes;
 		try {
 			biomes = (BiomeBase[]) CustomEntityType.getPrivateStatic(BiomeBase.class, "biomes"); /*
-																								  * Get
-																								  * all
-																								  * biomes
-																								  * again
-																								  */
+			 * Get
+			 * all
+			 * biomes
+			 * again
+			 */
 		} catch(final Exception exc) {
 			return;
 		}
@@ -170,11 +172,11 @@ public enum CustomEntityType {
 						for(final CustomEntityType entity : CustomEntityType.values())
 							if(entity.getCustomClass().equals(meta.b))
 								meta.b = entity.getNMSClass(); /*
-															    * Set the
-															    * entities meta
-															    * back to the
-															    * NMS one
-															    */
+								 * Set the
+								 * entities meta
+								 * back to the
+								 * NMS one
+								 */
 				} catch(final Exception e) {
 					e.printStackTrace();
 				}

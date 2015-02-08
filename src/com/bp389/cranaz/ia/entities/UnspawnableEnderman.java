@@ -10,7 +10,7 @@ public class UnspawnableEnderman extends EntityEnderman {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

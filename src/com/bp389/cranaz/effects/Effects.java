@@ -1,41 +1,43 @@
 package com.bp389.cranaz.effects;
 
-import java.io.IOException;
-
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.bp389.cranaz.Loadable;
-import com.bp389.cranaz.Loader;
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.YamlObj;
 
 public class Effects extends Loadable {
 
 	@Override
 	public void onEnable() {
 		if(!WeaponAim.Config.recoil_config.exists())
-			try {
-				WeaponAim.Config.recoil_config.createNewFile();
-				final FileConfiguration fc = Loader.plugin.getConfig();
+			Util.saveToYaml(WeaponAim.Config.recoil_config, new YamlObj(verticalPath("Moisin"), 25F),
+					new YamlObj(verticalPath("BAR"), 4F),
+					new YamlObj(verticalPath("AK-47"), 3F),
+					new YamlObj(verticalPath("Smith"), 5F),
+					new YamlObj(verticalPath("AK74u"), 2F),
+					new YamlObj(verticalPath("GrenadeLauncher"), 50F),
 
-				fc.set("recoil.values.Moisin.vertical", 25F);
-				fc.set("recoil.values.BAR.vertical", 4F);
-				fc.set("recoil.values.AK-47.vertical", 3F);
-				fc.set("recoil.values.Smith.vertical", 5F);
-				fc.set("recoil.values.GrenadeLauncher.vertical", 50F);
+					new YamlObj(horizontalPath("Moisin"), 3F),
+					new YamlObj(horizontalPath("BAR"), 1.5F),
+					new YamlObj(horizontalPath("AK-47"), 1F),
+					new YamlObj(horizontalPath("Smith"), 2F),
+					new YamlObj(horizontalPath("AK74u"), 0.5F),
+					new YamlObj(horizontalPath("GrenadeLauncher"), 5F),
 
-				fc.set("recoil.values.Moisin.horizontal.value", 3F);
-				fc.set("recoil.values.BAR.horizontal.value", 1.5F);
-				fc.set("recoil.values.AK-47.horizontal.value", 1F);
-				fc.set("recoil.values.Smith.horizontal.value", 2F);
-				fc.set("recoil.values.GrenadeLauncher.horizontal.value", 5F);
-
-				fc.set("recoil.values.Moisin.horizontal.direction", "RIGHT");
-				fc.set("recoil.values.BAR.horizontal.direction", "RIGHT");
-				fc.set("recoil.values.AK-47.horizontal.direction", "RIGHT");
-				fc.set("recoil.values.Smith.horizontal.direction", "LEFT");
-				fc.set("recoil.values.GrenadeLauncher.horizontal.direction", "LEFT");
-
-				fc.save(WeaponAim.Config.recoil_config);
-			} catch(final IOException e) {}
+					new YamlObj(horizontalDir("Moisin"), "RIGHT"),
+					new YamlObj(horizontalDir("BAR"), "RIGHT"),
+					new YamlObj(horizontalDir("AK-47"), "RIGHT"),
+					new YamlObj(horizontalDir("Smith"), "LEFT"),
+					new YamlObj(horizontalDir("AK74u"), "LEFT"),
+					new YamlObj(horizontalDir("GrenadeLauncher"), "LEFT"));
+	}
+	public String verticalPath(String name){
+		return "recoil.values." + name + ".vertical";
+	}
+	public String horizontalPath(String name){
+		return "recoil.values." + name + ".horizontal.value";
+	}
+	public String horizontalDir(String name){
+		return "recoil.values." + name + ".horizontal.direction";
 	}
 	/**
 	 * Pour la commande /die -> réanimation, CF Events

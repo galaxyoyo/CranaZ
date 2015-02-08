@@ -17,20 +17,20 @@ public enum Packs {
 	// Le premier argument est l'objet représentatif, le deuxième le taux de
 	// rareté
 	RAW_PORK(new ItemStack(Material.PORK), rarity.MEDIUM), 
-	WATER(Items.customWater(), 10), 
+	WATER(Items.water(), 10), 
 	SHIRT(Items.genTShirt(new ItemStack(Material.LEATHER_CHESTPLATE)), rarity.GREAT), 
 	PANT(Items.genTShirt(new ItemStack(Material.LEATHER_LEGGINGS)), rarity.GREAT), 
 	BOOTS(Items.genTShirt(new ItemStack(Material.LEATHER_BOOTS)), rarity.GREAT), 
 	HAT(Items.genTShirt(new ItemStack(Material.LEATHER_HELMET)), rarity.GREAT), 
 	WSWORD(new ItemStack(Material.WOOD_SWORD), rarity.MEDIUM), 
-	ISWORD(Items.customISword(), rarity.RARE), 
+	MACHETTE(Items.machette(), rarity.RARE), 
 	WATCH(new ItemStack(Material.WATCH), rarity.MEDIUM), 
 	TORCH(new ItemStack(Material.TORCH), rarity.COMMON), 
 	MAP(new ItemStack(Material.MAP), rarity.GREAT), 
 	SOUP(new ItemStack(Material.MUSHROOM_SOUP), rarity.MEDIUM), 
 	MOSIN_AM(Items.getAmmoStack(new ItemStack(Material.BLAZE_POWDER)), rarity.GREAT), 
-	BOW(Items.customBow(), rarity.RARE), 
-	ARROW(new ItemStack(Material.ARROW, LootRefactor.random.nextInt(16)), rarity.MEDIUM), 
+	BOW(Items.bow(), 9), 
+	ARROW(new ItemStack(Material.ARROW, 1), rarity.MEDIUM), 
 	PORK(new ItemStack(Material.GRILLED_PORK), rarity.MEDIUM), 
 	STEAK(new ItemStack(Material.COOKED_BEEF), rarity.MEDIUM), 
 	CHICKEN(new ItemStack(Material.COOKED_CHICKEN), rarity.MEDIUM), 
@@ -39,13 +39,16 @@ public enum Packs {
 	WMELON(new ItemStack(Material.MELON), rarity.MEDIUM), 
 	WSEED(new ItemStack(Material.SEEDS), rarity.MEDIUM), 
 	WHEAT(new ItemStack(Material.WHEAT), rarity.MEDIUM), 
-	STHOE(new ItemStack(Material.STONE_HOE),rarity.MEDIUM), IAXE(Items.customIAxe(), rarity.MEDIUM), 
+	STHOE(new ItemStack(Material.STONE_HOE),rarity.MEDIUM), 
+	AXE(Items.axe(), rarity.MEDIUM), 
 	REDSTONE(new ItemStack(Material.REDSTONE), rarity.MEDIUM), 
 	INGOT(new ItemStack(Material.IRON_INGOT), rarity.GREAT), 
 	COMPASS(new ItemStack(Material.COMPASS), rarity.GREAT), 
-	MILK(new ItemStack(Material.MILK_BUCKET),rarity.MEDIUM), PAPER(Items.customPaper(), rarity.GREAT), 
-	GOLDEN_APPLE(Items.customGApple(), rarity.RARE), 
-	APPLE(Items.customApple(), rarity.GREAT), AK47(LootRefactor.csu.generateWeapon("AK-47"), rarity.RARE), 
+	MILK(new ItemStack(Material.MILK_BUCKET),rarity.MEDIUM), 
+	PAPER(Items.bandages(), rarity.GREAT), 
+	BIG_BLOOD_BAG(Items.big_bloodBag(), rarity.RARE), 
+	BLOOD_BAG(Items.small_bloodBag(), rarity.GREAT), 
+	AK47(LootRefactor.csu.generateWeapon("AK-47"), rarity.RARE), 
 	BAR(LootRefactor.csu.generateWeapon("BAR"), rarity.RARE), 
 	MOSIN(LootRefactor.csu.generateWeapon("Moisin"), rarity.GREAT), 
 	M320(LootRefactor.csu.generateWeapon("GrenadeLauncher"), rarity.RARE), 
@@ -53,8 +56,11 @@ public enum Packs {
 	M320_AM(Items.getAmmoStack(new ItemStack(Material.FIREBALL)), rarity.RARE), 
 	BAR_AM(Items.getAmmoStack(new ItemStack(Material.MAGMA_CREAM)), rarity.RARE), 
 	BAG(Items.bagItemStack(), rarity.RARE), 
-	CAMO(Items.customCamo(),rarity.GREAT), CAMO_HELMET(Items.customCamo_helmet(), rarity.MEDIUM),
-	CAMO_PANTS(Items.customCamo_pants(), rarity.RARE), CAMO_BOOTS(Items.customCamo_boots(), rarity.RARE), AMPHET(Items.customPPie(), rarity.MEDIUM), 
+	CAMO(Items.camo_plate(),rarity.GREAT), 
+	CAMO_HELMET(Items.camo_helmet(), rarity.MEDIUM),
+	CAMO_PANTS(Items.camo_pants(), rarity.RARE), 
+	CAMO_BOOTS(Items.camo_boots(), rarity.RARE), 
+	AMPHET(Items.amphetamines(), rarity.MEDIUM), 
 	HOSHIRT(Items.hospitalShirt(), rarity.GREAT), 
 	JK_DIARY(Diaries.Bedroom.JORDAN_KENS.toItemStack(), rarity.RARE), 
 	FSEYE(new ItemStack(Material.FERMENTED_SPIDER_EYE), rarity.GREAT), 
@@ -62,8 +68,9 @@ public enum Packs {
 	CRAFTBOOK(Items.Diaries.Utils.CRAFTS.toItemStack(), rarity.GREAT), 
 	NEUROTOXIC(Items.Subs.Poison.NEUROTOXIC.toItem(), rarity.RARE), 
 	ARTERIAL(Items.Subs.Poison.ARTERIAL.toItem(), rarity.RARE), 
-	SSWORD(Items.customSSword(), rarity.GREAT), 
-	FLARE(Items.flare(), rarity.RARE);
+	MASS(Items.mass(), rarity.GREAT), 
+	FLARE(Items.flare(), rarity.RARE),
+	ANTALGIQUES(Items.antalgiques(), rarity.GREAT);
 
 	private int rare;
 	private ItemStack item;
@@ -83,6 +90,6 @@ public enum Packs {
 
 	public static class rarity {
 
-		public static final int COMMON = 6, MEDIUM = 8, GREAT = 10, RARE = 12;
+		public static final int COMMON = 5, MEDIUM = 6, GREAT = 8, RARE = 10;
 	}
 }

@@ -48,6 +48,11 @@ public final class Bleed {
 		p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 45 * 20, 3));
 		p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 60 * 20, 0));
 	}
+	
+	public static final void antalgiques(final Player p){
+		final Damageable d = p;
+		p.setHealth(d.getHealth() + 9D >= 24D ? ((Damageable) p).getMaxHealth() : d.getHealth() + 9D);
+	}
 
 	public static void bleedEffect(final LivingEntity le) {
 		final Location l = le.getEyeLocation();
@@ -82,7 +87,7 @@ public final class Bleed {
 		return p.hasPotionEffect(pe.getType());
 	}
 
-	public static final void neurtoxicPoison(final Player target) {
+	public static final void neurotoxicPoison(final Player target) {
 		new BukkitRunnable() {
 
 			@Override
@@ -104,7 +109,7 @@ public final class Bleed {
 		if(lvl == 0) {
 			target.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 90 * 20, 0));
 			final Damageable d = target;
-			target.setHealth(d.getHealth() + 10D >= 24D ? ((Damageable) target).getMaxHealth() : d.getHealth() + 10D);
+			target.setHealth(d.getHealth() + 10D >= 24D ? ((Damageable) target).getMaxHealth() : d.getHealth() + 12D);
 		} else {
 			target.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 90 * 20, 1));
 			target.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60 * 20, 0));

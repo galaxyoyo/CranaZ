@@ -10,7 +10,7 @@ public class UnspawnableCreeper extends EntityCreeper {
 	}
 
 	@Override
-	public boolean canSpawn() {
+	public boolean bQ() {
 		return false;
 	}
 }

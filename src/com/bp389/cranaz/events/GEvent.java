@@ -6,15 +6,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bp389.cranaz.Loadable;
+import com.bp389.cranaz.Util;
 
-public abstract class GEvent {
+public abstract class GEvent implements Listener {
 
 	public static final Random rand = new Random();
 	// public static ReviveHandler rh;
@@ -26,25 +28,32 @@ public abstract class GEvent {
 	public static ArrayList<Inventory> is = new ArrayList<Inventory>();
 	public static HashMap<Player, ItemStack> helmets = new HashMap<Player, ItemStack>();
 
+	@SuppressWarnings("unchecked")
 	public GEvent(final JavaPlugin jp) {
 		this.plugin = jp;
 		GEvent.static_plugin = jp;
-		final FileConfiguration fc = jp.getConfig();
-		final File cfg = new File("plugins/CranaZ/Divers/torteela.yml");
-		try {
-			boolean b = false;
-			if(!cfg.exists()) {
-				cfg.createNewFile();
-				fc.set("torteela.players", Arrays.asList("TST_null"));
-				fc.save(cfg);
-			} else
-				b = true;
-			if(b) {
-				fc.load(cfg);
-				GEvent.temps = (ArrayList<String>) fc.getStringList("torteela.players");
-			}
-		} catch(final Exception e) {}
+		final File cfg = new File("plugins/CranaZ/database/torteela.yml");
+		boolean b = false;
+		if(!cfg.exists()) {
+			Util.saveToYaml(cfg, "torteela.players", Arrays.asList("TST_null"));
+		} else
+			b = true;
+		if(b) {
+			GEvent.temps = (ArrayList<String>)Util.getFromYaml(cfg, "torteela.players");
+		}
+	}
+	
+	public static void registerAllEvents(final JavaPlugin jp){
+		final PluginManager pm = jp.getServer().getPluginManager();
+		pm.registerEvents(new EBags(jp), jp);
+		pm.registerEvents(new EEffects(jp), jp);
+		pm.registerEvents(new EIA(jp), jp);
+		pm.registerEvents(new EItemsLegacy(jp), jp);
+		pm.registerEvents(new ELoots(jp), jp);
+		pm.registerEvents(new EThirst(jp), jp);
+		pm.registerEvents(new EFPS(jp), jp);
 	}
 
 	public abstract Class<? extends Loadable> getRelativePlugin();
+	
 }

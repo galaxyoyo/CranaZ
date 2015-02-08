@@ -36,7 +36,8 @@ public final class NQHandler {
 	}
 
 	public static void forceRemove(final Player p) {
-		NQHandler.damagins.get(p).cancel();
+		if(NQHandler.damagins.containsKey(p))
+			NQHandler.damagins.get(p).cancel();
 		NQHandler.damagins.remove(p);
 	}
 

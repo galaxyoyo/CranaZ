@@ -1,6 +1,5 @@
 package com.bp389.cranaz.events;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
@@ -39,7 +37,8 @@ import net.minecraft.server.v1_8_R1.Blocks;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 
 import com.bp389.cranaz.Loadable;
-import com.bp389.cranaz.MathUtil;
+import com.bp389.cranaz.Util;
+import com.bp389.cranaz.Util.MathUtil;
 import com.bp389.cranaz.ia.GoMenu;
 import com.bp389.cranaz.ia.ResPackMenu;
 import com.bp389.cranaz.ia.VirtualSpawner;
@@ -66,19 +65,13 @@ public final class EIA extends GEvent implements Listener {
 	 */
 
 	public static void addToConfig(final String name) {
-		final FileConfiguration fc = GEvent.static_plugin.getConfig();
-		try {
-			fc.load(new File("plugins/CranaZ/Divers/torteela.yml"));
-			final List<String> ls = fc.getStringList("torteela.players");
-			ls.remove("TST_null");
-			if(!ls.contains(name))
-				ls.add(name);
-			fc.set("torteela.players", ls);
-			fc.save(new File("plugins/CranaZ/Divers/torteela.yml"));
-			GEvent.temps.add(name);
-		} catch(final Exception e) {
-			e.printStackTrace();
-		}
+		@SuppressWarnings("unchecked")
+		final List<String> ls = (List<String>)Util.getFromYaml("plugins/CranaZ/database/torteela.yml", "torteela.players");
+		ls.remove("TST_null");
+		if(!ls.contains(name))
+			ls.add(name);
+		Util.saveToYaml("plugins/CranaZ/database/torteela.yml", "torteela.players", ls);
+		GEvent.temps.add(name);
 	}
 
 	@EventHandler
@@ -149,18 +142,18 @@ public final class EIA extends GEvent implements Listener {
 				final CraftPlayer cp = (CraftPlayer) e.getPlayer();
 				//55 15 55
 				for(final net.minecraft.server.v1_8_R1.Entity e : MathUtil.get_NMS_optimizedEntities(cp.getHandle(), 55D, 15D, 55D)){
-					if(e instanceof EnhancedZombie && ((EnhancedZombie)e).getGoalTarget() == null){
+					if(e instanceof EnhancedZombie && ((EnhancedZombie)e).getGoalTarget() == null && !((EnhancedZombie) e).hasMove()){
 						new BukkitRunnable(){
-							
+
 							@Override
 							public void run(){
-								((EnhancedZombie)e).move(cp.getLocation());
+								((EnhancedZombie)e).move(cp.getLocation(), EnhancedZombie.MOVE_SPEED, true);
 							}
 						}.runTask(plugin);
 					}
 				}
 			}
-		}.runTaskAsynchronously(this.plugin);
+		}.runTask(this.plugin);
 	}
 
 	@EventHandler
@@ -169,8 +162,8 @@ public final class EIA extends GEvent implements Listener {
 			if(e.isZoomIn()) {
 				GEvent.helmets.put(e.getPlayer(), e.getPlayer().getInventory().getHelmet());
 				e.getPlayer().getInventory().setHelmet(new ItemStack(Material.PUMPKIN));
-				ZIA.Utils.sendPacketPos(e.getPlayer().getLocation(), 50, new PacketPlayOutEntityEquipment(e.getPlayer().getEntityId(), 3,
-				        new net.minecraft.server.v1_8_R1.ItemStack(Blocks.AIR)), e.getPlayer());
+				Util.sendPacketPos(e.getPlayer().getLocation(), 50, new PacketPlayOutEntityEquipment(e.getPlayer().getEntityId(), 3,
+						new net.minecraft.server.v1_8_R1.ItemStack(Blocks.AIR)), e.getPlayer());
 			} else {
 				e.getPlayer().getInventory().setHelmet(GEvent.helmets.get(e.getPlayer()));
 				GEvent.helmets.remove(e.getPlayer());
@@ -189,9 +182,9 @@ public final class EIA extends GEvent implements Listener {
 			e.getWhoClicked().closeInventory();
 			if(e.getCurrentItem().equals(GoMenu.alone)) {
 				this.playings.add((Player) e.getWhoClicked());
-				ZIA.Utils.noSPK_tp((Player) e.getWhoClicked());
+				Util.noSPK_tp((Player) e.getWhoClicked());
 			} else if(e.getCurrentItem().equals(GoMenu.many)) {
-				final Inventory i = Bukkit.getServer().createInventory(null, ZIA.Utils.iSize(), "Choisir un ami");
+				final Inventory i = Bukkit.getServer().createInventory(null, Util.iSize(), "Choisir un ami");
 				for(final Player p : Bukkit.getServer().getOnlinePlayers()) {
 					final ItemStack is = new ItemStack(Material.DIAMOND);
 					final ItemMeta im = is.getItemMeta();
@@ -203,9 +196,9 @@ public final class EIA extends GEvent implements Listener {
 				this.is.add(i);
 				e.getWhoClicked().openInventory(i);
 			} else if(e.getCurrentItem().equals(ResPackMenu.light))
-				((Player) e.getWhoClicked()).setResourcePack(ZIA.Utils.getPackLink(ZIA.Utils.LIGHT));
+				((Player) e.getWhoClicked()).setResourcePack(Util.getPackLink(Util.LIGHT));
 			else if(e.getCurrentItem().equals(ResPackMenu.heavy))
-				((Player) e.getWhoClicked()).setResourcePack(ZIA.Utils.getPackLink(ZIA.Utils.HEAVY));
+				((Player) e.getWhoClicked()).setResourcePack(Util.getPackLink(Util.HEAVY));
 			else if(this.is.contains(e.getInventory())) {
 				if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(e.getWhoClicked().getName())) {
 					((Player) e.getWhoClicked()).sendMessage("§r§cVeuillez selectionner un joueur autre que vous-même.§r");
@@ -219,9 +212,9 @@ public final class EIA extends GEvent implements Listener {
 				ZIA.ps.put(p, p1);
 				p1.sendMessage("Demande envoyée.");
 				p.sendMessage((String[]) Arrays.asList(e.getWhoClicked().getName() + " souhaiterait partir avec vous.", "- /cranaz accept pour accepter.",
-				        "- /cranaz decline pour refuser.").toArray());
+						"- /cranaz decline pour refuser.").toArray());
 				this.playings.add((Player) e.getWhoClicked());
-				ZIA.Utils.noSPK_tp((Player) e.getWhoClicked());
+				Util.noSPK_tp((Player) e.getWhoClicked());
 			}
 		}
 	}
@@ -234,7 +227,7 @@ public final class EIA extends GEvent implements Listener {
 			if(cez.ipf)
 				if(cez.getEquipment(0) != null)
 					lis.add(CraftItemStack.asBukkitCopy(cez.getEquipment(0)));
-			final VirtualSpawner vs = VirtualSpawner.getNearbySpawner(e.getEntity().getLocation(), 45);
+			final VirtualSpawner vs = VirtualSpawner.getNearbySpawner(e.getEntity().getLocation(), 80);
 			if(vs != null)
 				if(vs.getCount() < 25)
 					vs.countPlus();
@@ -257,9 +250,9 @@ public final class EIA extends GEvent implements Listener {
 			ZIA.RandomSpawns.init(this.plugin, e.getPlayer().getWorld());
 		if(!GEvent.temps.contains(e.getPlayer().getName()))
 			e.getPlayer().sendMessage(
-			        new String[] { "§r§cIl t'est fortement conséillé d'aller voir Torteela dans le couloir à ta gauche.",
-			                "§cTu pourras ainsi disposer du resource pack le plus récent.§r" });
-		e.getPlayer().setResourcePack(ZIA.Utils.getPackLink(ZIA.Utils.LIGHT));
+					new String[] { "§r§cIl t'est fortement conséillé d'aller voir Torteela dans le couloir à ta gauche.",
+					"§cTu pourras ainsi disposer du resource pack le plus récent.§r" });
+		e.getPlayer().setResourcePack(Util.getPackLink(Util.LIGHT));
 	}
 
 	@EventHandler
@@ -267,10 +260,14 @@ public final class EIA extends GEvent implements Listener {
 		GEvent.playings.remove(e.getEntity());
 		try {
 			if(e.getEntity().getLastDamageCause().getCause() == DamageCause.ENTITY_ATTACK) {
+				e.setDeathMessage(e.getEntity().getKiller() == null ? e.getEntity().getDisplayName() + ZombieMessage.random().toString() : e.getEntity()
+						.getDisplayName() + " a été tué par " + e.getEntity().getKiller().getDisplayName());
+				final Boolean b = (Boolean)Util.getFromYaml(ZIA.ia_config, "zombies.spawn.mort_joueur", Boolean.valueOf(true));
+				Bukkit.getServer().broadcastMessage(String.valueOf(b.booleanValue()));
+				if(b.booleanValue() == false)
+					return;
 				final EnhancedZombie ez = ZIA.spawnZombie(e.getEntity().getLocation());
 				ez.setPlayerEquipment(e.getEntity());
-				e.setDeathMessage(e.getEntity().getKiller() == null ? e.getEntity().getDisplayName() + ZombieMessage.random().toString() : e.getEntity()
-				        .getDisplayName() + " a été tué par " + e.getEntity().getKiller().getDisplayName());
 			}
 		} catch(final NullPointerException e2) {}
 	}
@@ -291,7 +288,7 @@ public final class EIA extends GEvent implements Listener {
 
 	public enum ZombieMessage {
 		ASSAULT(" est tombé sous l'assaut des zombies. Paix à son âme."), ZOMBIFICATION(" a été infecté. Triste nouvelle."), HORDE(
-		        " est mort sous une horde de zombies. Saluons son courage.");
+				" est mort sous une horde de zombies. Saluons son courage.");
 
 		private String s;
 		private static final Random r = new Random();
