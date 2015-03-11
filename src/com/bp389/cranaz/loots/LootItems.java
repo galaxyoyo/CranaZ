@@ -13,7 +13,7 @@ import com.bp389.cranaz.items.Items.Diaries;
  * @author BlackPhantom
  * 
  */
-public enum Packs {
+public enum LootItems {
 	// Le premier argument est l'objet représentatif, le deuxième le taux de
 	// rareté
 	RAW_PORK(new ItemStack(Material.PORK), rarity.MEDIUM), 
@@ -39,7 +39,7 @@ public enum Packs {
 	WMELON(new ItemStack(Material.MELON), rarity.MEDIUM), 
 	WSEED(new ItemStack(Material.SEEDS), rarity.MEDIUM), 
 	WHEAT(new ItemStack(Material.WHEAT), rarity.MEDIUM), 
-	STHOE(new ItemStack(Material.STONE_HOE),rarity.MEDIUM), 
+	STHOE(new ItemStack(Material.STONE_HOE), rarity.MEDIUM), 
 	AXE(Items.axe(), rarity.MEDIUM), 
 	REDSTONE(new ItemStack(Material.REDSTONE), rarity.MEDIUM), 
 	INGOT(new ItemStack(Material.IRON_INGOT), rarity.GREAT), 
@@ -75,7 +75,7 @@ public enum Packs {
 	private int rare;
 	private ItemStack item;
 
-	private Packs(final ItemStack item, final int rarity) {
+	private LootItems(final ItemStack item, final int rarity) {
 		this.item = item;
 		this.rare = rarity;
 	}

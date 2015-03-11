@@ -172,6 +172,9 @@ public final class Util {
 		final double x = Integer.valueOf(Bukkit.getServer().getOnlinePlayers().length).doubleValue(), y = 9D;
 		return Double.valueOf(MathUtil.supMultiplier(x, y)).intValue();
 	}
+	
+	public static void relativeTp(Player p, float yaw, float pitch){
+	}
 
 	/*
 	 * 

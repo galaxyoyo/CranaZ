@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import net.minecraft.server.v1_8_R1.DifficultyDamageScaler;
 import net.minecraft.server.v1_8_R1.EntityHuman;
@@ -17,11 +16,13 @@ import net.minecraft.server.v1_8_R1.EnumDifficulty;
 import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.ItemStack;
 import net.minecraft.server.v1_8_R1.Items;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
 import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
 import net.minecraft.server.v1_8_R1.PathfinderGoalOpenDoor;
 import net.minecraft.server.v1_8_R1.World;
 
 import com.bp389.cranaz.Util;
+import com.bp389.cranaz.api.EZombie_API.ZombieAttribute;
 import com.bp389.cranaz.ia.VirtualSpawner;
 import com.bp389.cranaz.ia.ZIA;
 
@@ -32,23 +33,25 @@ import com.bp389.cranaz.ia.ZIA;
  * 
  */
 public class EnhancedZombie extends EntityZombie {
-
-	@SuppressWarnings("unused")
-	private static JavaPlugin plugin;
 	// True si c'est un zombie joueur
 	public boolean ipf = false;
 	private boolean hasMove = false;
 	// Constantes explicites
 	public static final double SPEED = 0.23000000417232513D * 1.6D, FOLLOW_RANGE = 60D, MOVE_SPEED = EnhancedZombie.SPEED * 1.75D, ATTACK_DAMAGE = 3.0D;
 
-	public static void initPlugin(final JavaPlugin jp) {
-		EnhancedZombie.plugin = jp;
-	}
-
 	public EnhancedZombie(final World world) {
 		super(world);
 	}
-
+	
+	public void addGoalSelector(int i, PathfinderGoal goal){
+		this.goalSelector.a(i, goal);
+	}
+	public void addTargetSelector(int i, PathfinderGoal target){
+		this.targetSelector.a(i, target);
+	}
+	public void setAttribute(ZombieAttribute attrib, double val){
+		this.getAttributeInstance(attrib.getAttribute()).setValue(val);
+	}
 	@Override
 	protected void n() {
 		this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true, new Class[] { EntityPigZombie.class }));

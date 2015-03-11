@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bp389.cranaz.loots.EnumPacks;
 import com.bp389.cranaz.loots.LootRefactor;
 import com.bp389.cranaz.loots.LootableArmorStand;
-import com.bp389.cranaz.loots.Packs;
+import com.bp389.cranaz.loots.LootItems;
 
 
 public final class LootsAPI extends CranaZAPI {
@@ -22,7 +22,7 @@ public final class LootsAPI extends CranaZAPI {
 	 * @param item L'objet
 	 * @param count Le nombre
 	 */
-	public void addItemTo(final Player player, final Packs item, int count){
+	public void addItemTo(final Player player, final LootItems item, int count){
 		final ItemStack is = item.item();
 		is.setAmount(count);
 		player.getInventory().addItem(is);

@@ -44,7 +44,7 @@ public final class LootRefactor {
 	//public static volatile Hashtable<Location, ThreadSpawner> loots = new Hashtable<Location, ThreadSpawner>();
 	public static volatile HashMap<EntityArmorStand, ThreadSpawner> loots = new HashMap<EntityArmorStand, ThreadSpawner>();
 	public static final int PACK = 0, LOOT = 1;
-	public static final String packLoc = "plugins/CranaZ/database/packs/", lootLoc = "plugins/CranaZ/database/loots/";
+	public static final String packLoc = "plugins/CranaZ/database/chests/", lootLoc = "plugins/CranaZ/database/loots/";
 
 	public static void init(final World world, final JavaPlugin jp, final Server serv) {
 		LootRefactor.main = world;
@@ -219,7 +219,7 @@ public final class LootRefactor {
 	public ArrayList<ItemStack> randomSort(final EnumPacks pack) {
 		if(pack != EnumPacks.NULL) {
 			final ArrayList<ItemStack> tmp = new ArrayList<ItemStack>();
-			final ArrayList<Packs> tmp2 = pack.items();
+			final ArrayList<LootItems> tmp2 = pack.items();
 			for(int i = 0; i < tmp2.size(); i++) {
 				if(this.random.nextInt(tmp2.get(i).rare()) < 1)
 					tmp.add(tmp2.get(i).item());
@@ -493,7 +493,7 @@ public final class LootRefactor {
 
 	public final ItemStack randomIcon(final EnumPacks es) {
 		ItemStack is = null;
-		for(Packs p : es.items()){
+		for(LootItems p : es.items()){
 			if(LootRefactor.random.nextInt(p.rare()) == 0){
 				is = p.item();
 				break;

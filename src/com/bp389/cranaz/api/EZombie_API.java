@@ -107,5 +107,8 @@ public final class EZombie_API {
 		ZombieAttribute(IAttribute ga){
 			this.ga = ga;
 		}
+		public IAttribute getAttribute(){
+			return ga;
+		}
 	}
 }

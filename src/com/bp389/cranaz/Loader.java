@@ -10,7 +10,6 @@ import com.bp389.cranaz.bags.IPlayerFactor;
 import com.bp389.cranaz.effects.Bleed;
 import com.bp389.cranaz.effects.Effects;
 import com.bp389.cranaz.ia.ZIA;
-import com.bp389.cranaz.ia.entities.EnhancedZombie;
 import com.bp389.cranaz.items.CItems;
 import com.bp389.cranaz.legacy.Legacy;
 import com.bp389.cranaz.legacy.NQHandler;
@@ -58,7 +57,6 @@ public final class Loader {
 		Bleed.init(jp);
 		NQHandler.init(jp);
 		ThirstFactor.init(jp);
-		EnhancedZombie.initPlugin(jp);
 	}
 
 	public static final void parseCommand(final CommandSender cs, final Command c, final String lbl, final String[] args) {

@@ -32,79 +32,79 @@ public final class Loots extends Loadable {
 								ItemStack temp = new ItemStack(Material.AIR);
 								switch(args[1].toLowerCase()) {
 									case "eau":
-										temp = Packs.WATER.item();
+										temp = LootItems.WATER.item();
 										break;
 									case "maillot":
-										temp = Packs.SHIRT.item();
+										temp = LootItems.SHIRT.item();
 										break;
 									case "pantalon":
-										temp = Packs.PANT.item();
+										temp = LootItems.PANT.item();
 										break;
 									case "casquette":
-										temp = Packs.HAT.item();
+										temp = LootItems.HAT.item();
 										break;
 									case "bottes":
-										temp = Packs.BOOTS.item();
+										temp = LootItems.BOOTS.item();
 										break;
 									case "machette":
-										temp = Packs.MACHETTE.item();
+										temp = LootItems.MACHETTE.item();
 										break;
 									case "hache":
-										temp = Packs.AXE.item();
+										temp = LootItems.AXE.item();
 										break;
 									case "mosin":
-										temp = Packs.MOSIN_AM.item();
+										temp = LootItems.MOSIN_AM.item();
 										break;
 									case "ak47":
-										temp = Packs.AK47_AM.item();
+										temp = LootItems.AK47_AM.item();
 										break;
 									case "m320":
-										temp = Packs.M320_AM.item();
+										temp = LootItems.M320_AM.item();
 										break;
 									case "bar":
-										temp = Packs.BAR_AM.item();
+										temp = LootItems.BAR_AM.item();
 										break;
 									case "arc":
-										temp = Packs.BOW.item();
+										temp = LootItems.BOW.item();
 										break;
 									case "bandages":
-										temp = Packs.PAPER.item();
+										temp = LootItems.PAPER.item();
 										break;
 									case "sang":
-										temp = Packs.BLOOD_BAG.item();
+										temp = LootItems.BLOOD_BAG.item();
 										break;
 									case "camo":
-										temp = Packs.CAMO.item();
+										temp = LootItems.CAMO.item();
 										break;
 									case "camo_pant":
-										temp = Packs.CAMO_PANTS.item();
+										temp = LootItems.CAMO_PANTS.item();
 										break;
 									case "camo_boots":
-										temp = Packs.CAMO_BOOTS.item();
+										temp = LootItems.CAMO_BOOTS.item();
 										break;
 									case "camo_helmet":
-										temp = Packs.CAMO_HELMET.item();
+										temp = LootItems.CAMO_HELMET.item();
 										break;
 									case "amphet":
-										temp = Packs.AMPHET.item();
+										temp = LootItems.AMPHET.item();
 										break;
 									case "blouse":
-										temp = Packs.HOSHIRT.item();
+										temp = LootItems.HOSHIRT.item();
 										break;
 									case "neurotoxic":
-										temp = Packs.NEUROTOXIC.item();
+										temp = LootItems.NEUROTOXIC.item();
 										break;
 									case "arteriel":
-										temp = Packs.ARTERIAL.item();
+										temp = LootItems.ARTERIAL.item();
 										break;
 									case "massue":
-										temp = Packs.MASS.item();
+										temp = LootItems.MASS.item();
 										break;
 									case "smith":
 										temp = Items.getAmmoStack(new ItemStack(Material.SLIME_BALL));
 										break;
 									case "antalgiques":
-										temp = Packs.ANTALGIQUES.item();
+										temp = LootItems.ANTALGIQUES.item();
 										break;
 									default:
 										this.sendMessages(player, "Objets disponibles:", 

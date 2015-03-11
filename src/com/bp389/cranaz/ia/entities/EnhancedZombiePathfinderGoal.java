@@ -20,7 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
- * Pathfinder définissant les cibles humaines du zombie
+ * Pathfinder dï¿½finissant les cibles humaines du zombie
  * 
  * @author BlackPhantom
  * 
