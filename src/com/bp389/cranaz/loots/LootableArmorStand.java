@@ -37,80 +37,30 @@ public final class LootableArmorStand extends CraftArmorStand {
 		boolean b = false;
 		switch(is.getType()){
 			case BOW:
-				b = true;
-				break;
 			case IRON_AXE:
-				b = true;
-				break;
 			case IRON_HOE:
-				b = true;
-				break;
 			case IRON_PICKAXE:
-				b = true;
-				break;
 			case IRON_SPADE:
-				b = true;
-				break;
 			case IRON_SWORD:
-				b = true;
-				break;
 			case WOOD_SPADE:
-				b = true;
-				break;
 			case WOOD_AXE:
-				b = true;
-				break;
 			case WOOD_HOE:
-				b = true;
-				break;
 			case WOOD_PICKAXE:
-				b = true;
-				break;
 			case WOOD_SWORD:
-				b = true;
-				break;
 			case STONE_AXE:
-				b = true;
-				break;
 			case STONE_HOE:
-				b = true;
-				break;
 			case STONE_PICKAXE:
-				b = true;
-				break;
 			case STONE_SPADE:
-				b = true;
-				break;
 			case STONE_SWORD:
-				b = true;
-				break;
 			case GOLD_AXE:
-				b = true;
-				break;
 			case GOLD_PICKAXE:
-				b = true;
-				break;
 			case GOLD_SPADE:
-				b = true;
-				break;
 			case GOLD_SWORD:
-				b = true;
-				break;
 			case GOLD_HOE:
-				b = true;
-				break;
 			case DIAMOND_AXE:
-				b = true;
-				break;
 			case DIAMOND_HOE:
-				b = true;
-				break;
 			case DIAMOND_PICKAXE:
-				b = true;
-				break;
 			case DIAMOND_SPADE:
-				b = true;
-				break;
 			case DIAMOND_SWORD:
 				b = true;
 				break;
